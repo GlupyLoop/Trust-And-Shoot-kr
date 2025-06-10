@@ -1,0 +1,310 @@
+{
+  "slides": [
+    {
+      "id": 1,
+      "title": "Trust & Shoot",
+      "type": "title",
+      "content": {
+        "mainTitle": "Trust & Shoot",
+        "subtitle": "L'application de mise en relation entre photographes et cosplayers, en toute confiance.",
+        "icons": ["Camera", "Users", "Shield"]
+      }
+    },
+    {
+      "id": 2,
+      "title": "Introduction & Contexte",
+      "type": "introduction",
+      "content": {
+        "profile": {
+          "name": "Glupyloop",
+          "role": "Créateur & Photographe",
+          "skills": ["Photographe cosplay spécialisé", "Designer web passionné", "Actif dans la communauté geek"]
+        },
+        "problems": ["Absence de visibilité", "Manque de confiance", "Annulations de dernière minute"],
+        "solution": "Trust & Shoot : une réponse créative et digitale qui facilite, sécurise et enrichit les collaborations cosplay."
+      }
+    },
+    {
+      "id": 3,
+      "title": "Problématique",
+      "type": "problems",
+      "content": {
+        "problems": [
+          {
+            "title": "Difficulté de recherche",
+            "description": "Il est difficile de trouver un photographe ou un cosplayer de confiance",
+            "icon": "Search"
+          },
+          {
+            "title": "Absence de plateforme",
+            "description": "Il n'existe pas de plateforme dédiée pour organiser efficacement un shooting",
+            "icon": "Shield"
+          },
+          {
+            "title": "Rencontres à l'aveugle",
+            "description": "Les rencontres se font à l'aveugle, souvent via les réseaux sociaux",
+            "icon": "MessageSquare"
+          },
+          {
+            "title": "Manque d'outils",
+            "description": "Les conventions manquent d'outils numériques pour coordonner les séances",
+            "icon": "Calendar"
+          }
+        ],
+        "conclusion": "Ce manque d'organisation et de confiance freine la création artistique et décourage les collaborations."
+      }
+    },
+    {
+      "id": 4,
+      "title": "Concept de l'application",
+      "type": "concept",
+      "content": {
+        "mainConcept": "Trust & Shoot, c'est une web-app pensée comme un Tinder sécurisé pour photographes et cosplayers.",
+        "features": [
+          {
+            "title": "Profil vérifié",
+            "description": "avec portfolio",
+            "icon": "Users",
+            "color": "blue"
+          },
+          {
+            "title": "Matching",
+            "description": "styles, localisation, disponibilités",
+            "icon": "Heart",
+            "color": "pink"
+          },
+          {
+            "title": "Réservation",
+            "description": "créneaux pour shootings",
+            "icon": "Calendar",
+            "color": "green"
+          },
+          {
+            "title": "Réputation",
+            "description": "avis et visibilité",
+            "icon": "Star",
+            "color": "yellow"
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "title": "Fonctionnalités principales",
+      "type": "features",
+      "content": {
+        "features": [
+          {
+            "title": "Profils vérifiés",
+            "description": "avec portfolio complet et authentification sécurisée",
+            "icon": "Shield",
+            "emoji": "✔️"
+          },
+          {
+            "title": "Réservation de créneaux",
+            "description": "et agenda partagé pour une organisation optimale",
+            "icon": "Calendar",
+            "emoji": "🗓️"
+          },
+          {
+            "title": "Carte des conventions",
+            "description": "et présence utilisateur en temps réel",
+            "icon": "MapPin",
+            "emoji": "🧭"
+          },
+          {
+            "title": "Système d'évaluations",
+            "description": "et de commentaires pour bâtir la confiance",
+            "icon": "Star",
+            "emoji": "⭐"
+          },
+          {
+            "title": "Filtres avancés",
+            "description": "par style, localisation, expérience et plus",
+            "icon": "Filter",
+            "emoji": "🔍"
+          },
+          {
+            "title": "Messagerie intégrée",
+            "description": "communication sécurisée et historique des échanges",
+            "icon": "MessageCircle",
+            "emoji": "💬"
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "title": "Public cible",
+      "type": "target",
+      "content": {
+        "targets": [
+          {
+            "title": "Cosplayers",
+            "description": "Débutants ou expérimentés, qui cherchent des shootings qualitatifs pour mettre en valeur leurs créations",
+            "icon": "UserRound"
+          },
+          {
+            "title": "Photographes",
+            "description": "Professionnels ou amateurs passionnés spécialisés dans le cosplay et la pop culture",
+            "icon": "Users"
+          },
+          {
+            "title": "Organisateurs de conventions",
+            "description": "Qui peuvent s'appuyer sur l'app pour gérer les séances photo et améliorer l'expérience des participants",
+            "icon": "CalendarDays"
+          },
+          {
+            "title": "Créateurs de contenu",
+            "description": "Influenceurs issus de la pop culture cherchant à collaborer avec des professionnels de l'image",
+            "icon": "Megaphone"
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "title": "Stack technique",
+      "type": "tech",
+      "content": {
+        "categories": [
+          {
+            "title": "Front-end",
+            "icon": "Code",
+            "technologies": ["Next.js 14", "Tailwind CSS", "shadcn/ui", "TypeScript"]
+          },
+          {
+            "title": "Back-end",
+            "icon": "Database",
+            "technologies": ["Supabase", "API REST temps réel", "Firebase Storage", "Serverless Functions"]
+          },
+          {
+            "title": "Design",
+            "icon": "Palette",
+            "technologies": [
+              "Flat design moderne",
+              "UI inspirée de tonemaki.com",
+              "Design System cohérent",
+              "Responsive design"
+            ]
+          },
+          {
+            "title": "Authentification",
+            "icon": "Lock",
+            "technologies": ["Google", "Facebook", "Email avec vérification", "Gestion des rôles utilisateurs"]
+          }
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "title": "UI/UX Design",
+      "type": "design",
+      "content": {
+        "description": "Interface claire, colorée et adaptée à la communauté",
+        "userFlow": [
+          "Inscription simplifiée",
+          "Création de profil intuitive",
+          "Recherche et filtrage efficaces",
+          "Réservation en quelques clics"
+        ],
+        "keyComponents": [
+          "Cartes de profil avec portfolio",
+          "Système de notation avec étoiles",
+          "Carte interactive des conventions",
+          "Messagerie intuitive",
+          "Calendrier de réservation"
+        ],
+        "prototype": "Un prototype Figma a été réalisé pour tester le flow complet"
+      }
+    },
+    {
+      "id": 9,
+      "title": "Différenciateurs clés",
+      "type": "differentiators",
+      "content": {
+        "differentiators": [
+          {
+            "title": "Spécialisation cosplay",
+            "description": "Notre outil parle le langage de la communauté et répond à ses besoins spécifiques",
+            "icon": "Lightbulb",
+            "emoji": "💡"
+          },
+          {
+            "title": "Sécurité et confiance",
+            "description": "Mise en avant de la sécurité, de la transparence et de la réputation des utilisateurs",
+            "icon": "Shield",
+            "emoji": "🔐"
+          },
+          {
+            "title": "Fonctionnalités utiles",
+            "description": "Matching intelligent, réservation de créneaux et intégration des conventions",
+            "icon": "Settings",
+            "emoji": "⚙️"
+          },
+          {
+            "title": "Projet évolutif",
+            "description": "Vision claire : marketplace, IA, calendrier partagé et expansion internationale",
+            "icon": "Sprout",
+            "emoji": "🌱"
+          }
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "title": "Roadmap & perspectives",
+      "type": "roadmap",
+      "content": {
+        "phases": [
+          {
+            "title": "État actuel",
+            "phase": 1,
+            "items": [
+              "Développement du MVP en cours",
+              "Design finalisé",
+              "Authentification & base de données fonctionnelles",
+              "Fonctionnalités de base implémentées"
+            ],
+            "status": "completed"
+          },
+          {
+            "title": "Prochaines étapes",
+            "phase": 2,
+            "items": [
+              "Tests utilisateurs en conditions réelles",
+              "Version bêta à tester lors de conventions cosplay",
+              "Déploiement d'une version mobile",
+              "Amélioration du système de matching"
+            ],
+            "status": "in-progress"
+          },
+          {
+            "title": "Vision long terme",
+            "phase": 3,
+            "items": [
+              "Intégration d'un système de matching intelligent (IA)",
+              "Partenariats avec conventions et marques geek",
+              "Déploiement en Europe, puis à l'international",
+              "Marketplace pour services photo complémentaires"
+            ],
+            "status": "planned"
+          }
+        ],
+        "progress": 35
+      }
+    },
+    {
+      "id": 11,
+      "title": "Conclusion",
+      "type": "conclusion",
+      "content": {
+        "mainMessage": "Trust & Shoot est bien plus qu'un projet scolaire ou personnel : c'est une réponse concrète à un vrai besoin, ancrée dans une communauté vivante et créative.",
+        "belief": "Je crois profondément qu'en combinant design, technologie et compréhension de terrain, on peut créer un outil utile, fiable, et porteur de lien.",
+        "thanks": "Merci de votre attention",
+        "callToAction": "Si vous êtes photographe, cosplayer, investisseur ou simplement curieux, rejoignez l'aventure !",
+        "emoji": "🚀"
+      }
+    }
+  ]
+}

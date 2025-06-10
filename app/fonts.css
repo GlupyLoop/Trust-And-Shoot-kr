@@ -1,0 +1,23 @@
+@font-face {
+  font-family: "Thunder";
+  src: url("/fonts/Thunder-Bold.woff2") format("woff2"), url("/fonts/Thunder-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thunder";
+  src: url("/fonts/Thunder-Regular.woff2") format("woff2"), url("/fonts/Thunder-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Thunder";
+  src: url("/fonts/Thunder-Light.woff2") format("woff2"), url("/fonts/Thunder-Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}

@@ -1,0 +1,71 @@
+{
+  "designSystem": {
+    "colors": {
+      "primary": {
+        "orange-500": "#F97316",
+        "orange-400": "#FB923C",
+        "orange-600": "#EA580C"
+      },
+      "background": {
+        "black": "#000000",
+        "gray-900": "#111827",
+        "gray-800": "#1F2937"
+      },
+      "text": {
+        "white": "#FFFFFF",
+        "gray-300": "#D1D5DB",
+        "gray-400": "#9CA3AF"
+      },
+      "accent": {
+        "red-500": "#EF4444",
+        "green-500": "#10B981",
+        "blue-500": "#3B82F6",
+        "yellow-500": "#F59E0B",
+        "purple-500": "#8B5CF6",
+        "pink-500": "#EC4899"
+      }
+    },
+    "typography": {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "sizes": {
+        "title": "48px",
+        "subtitle": "32px",
+        "heading": "24px",
+        "body": "16px",
+        "caption": "14px"
+      },
+      "weights": {
+        "bold": 700,
+        "semibold": 600,
+        "medium": 500,
+        "regular": 400
+      }
+    },
+    "spacing": {
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px",
+      "3xl": "64px"
+    },
+    "borderRadius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "12px",
+      "xl": "16px",
+      "2xl": "24px",
+      "full": "9999px"
+    },
+    "shadows": {
+      "card": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+      "hover": "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
+    }
+  },
+  "slidesDimensions": {
+    "width": "1920px",
+    "height": "1080px",
+    "aspectRatio": "16:9"
+  }
+}
