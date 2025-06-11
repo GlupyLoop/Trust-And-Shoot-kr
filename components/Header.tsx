@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { useLanguage } from "@/contexts/language-context"
 import { signOutUser } from "@/lib/firebase"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 // Ajouter l'import pour l'icône Calendar
 import { Menu, X, LogOut, User, Camera, Bell, MessageSquare, ChevronDown, Globe, Calendar } from "lucide-react"
 // Ajouter l'import pour useMessaging
@@ -23,6 +23,7 @@ export default function Header() {
   const { user, userData } = useAuth()
   const { language, setLanguage, t } = useLanguage()
   const router = useRouter()
+  const pathname = usePathname()
 
   // Dans la fonction Header, ajouter cette ligne après les autres hooks
   const { unreadCount } = useMessaging()
@@ -117,25 +118,38 @@ export default function Header() {
                   <motion.div className="relative" whileHover={{ scale: 1.05 }}>
                     <Link
                       href="/conventions"
-                      className="flex items-center gap-1 text-[#fffbea] hover:text-[#ff7145] transition-colors"
+                      className={`flex items-center gap-1 transition-colors ${
+                        pathname === "/conventions"
+                          ? "text-[#ff7145] font-medium"
+                          : "text-[#fffbea] hover:text-[#ff7145]"
+                      }`}
                     >
                       <Calendar size={18} />
                       <span>Conventions</span>
+                      {pathname === "/conventions" && (
+                        <motion.div
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#ff7145] rounded-full"
+                          layoutId="activeIndicator"
+                        />
+                      )}
                     </Link>
                   </motion.div>
-
-                  {/* Dans la section Desktop Navigation, après le lien vers les conventions et avant le sélecteur de langue
-                  // Ajouter ce bloc de code après la ligne:
-                  // </Link>
-                  // </motion.div> */}
 
                   <motion.div className="relative" whileHover={{ scale: 1.05 }}>
                     <Link
                       href="/messages"
-                      className="flex items-center gap-1 text-[#fffbea] hover:text-[#ff7145] transition-colors"
+                      className={`flex items-center gap-1 transition-colors ${
+                        pathname === "/messages" ? "text-[#ff7145] font-medium" : "text-[#fffbea] hover:text-[#ff7145]"
+                      }`}
                     >
                       <MessageSquare size={18} />
                       <span>{t("nav.messages")}</span>
+                      {pathname === "/messages" && (
+                        <motion.div
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#ff7145] rounded-full"
+                          layoutId="activeIndicator"
+                        />
+                      )}
                     </Link>
                   </motion.div>
 
@@ -146,10 +160,20 @@ export default function Header() {
                           ? "/photographer-dashboard/bookings"
                           : "/cosplayer-dashboard/bookings"
                       }
-                      className="flex items-center gap-1 text-[#fffbea] hover:text-[#ff7145] transition-colors"
+                      className={`flex items-center gap-1 transition-colors ${
+                        pathname.includes("/bookings")
+                          ? "text-[#ff7145] font-medium"
+                          : "text-[#fffbea] hover:text-[#ff7145]"
+                      }`}
                     >
                       <Calendar size={18} />
                       <span>{t("nav.reservations") || "Reservations"}</span>
+                      {pathname.includes("/bookings") && (
+                        <motion.div
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#ff7145] rounded-full"
+                          layoutId="activeIndicator"
+                        />
+                      )}
                     </Link>
                   </motion.div>
 
@@ -402,16 +426,16 @@ export default function Header() {
                     {/* Ajout du lien vers le calendrier dans le menu mobile */}
                     <Link
                       href="/conventions"
-                      className="flex items-center gap-2 w-full p-3 hover:bg-[#2a2a2a] rounded-md transition-colors"
+                      className={`flex items-center gap-2 w-full p-3 rounded-md transition-colors ${
+                        pathname === "/conventions"
+                          ? "bg-[#ff7145]/20 text-[#ff7145] border-l-2 border-[#ff7145]"
+                          : "hover:bg-[#2a2a2a]"
+                      }`}
                       onClick={closeMenus}
                     >
                       <Calendar size={18} />
                       <span>Conventions</span>
                     </Link>
-
-                    {/* Dans la section Mobile Menu, après le lien vers les conventions et avant le lien vers les messages
-                    // Ajouter ce bloc de code après la ligne:
-                    // </Link> */}
 
                     <Link
                       href={
@@ -419,7 +443,11 @@ export default function Header() {
                           ? "/photographer-dashboard/bookings"
                           : "/cosplayer-dashboard/bookings"
                       }
-                      className="flex items-center gap-2 w-full p-3 hover:bg-[#2a2a2a] rounded-md transition-colors"
+                      className={`flex items-center gap-2 w-full p-3 rounded-md transition-colors ${
+                        pathname.includes("/bookings")
+                          ? "bg-[#ff7145]/20 text-[#ff7145] border-l-2 border-[#ff7145]"
+                          : "hover:bg-[#2a2a2a]"
+                      }`}
                       onClick={closeMenus}
                     >
                       <Calendar size={18} />
@@ -428,7 +456,11 @@ export default function Header() {
 
                     <Link
                       href="/messages"
-                      className="flex items-center gap-2 w-full p-3 hover:bg-[#2a2a2a] rounded-md transition-colors"
+                      className={`flex items-center gap-2 w-full p-3 rounded-md transition-colors ${
+                        pathname === "/messages"
+                          ? "bg-[#ff7145]/20 text-[#ff7145] border-l-2 border-[#ff7145]"
+                          : "hover:bg-[#2a2a2a]"
+                      }`}
                       onClick={closeMenus}
                     >
                       <MessageSquare size={18} />
