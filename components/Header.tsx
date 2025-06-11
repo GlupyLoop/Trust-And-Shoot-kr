@@ -103,25 +103,7 @@ export default function Header() {
           >
             <Link href="/" className="flex items-center gap-2">
               <div className="h-10 w-auto relative">
-                <Image src="/logo.png" alt="Trust & Shoot Logo" width={50} height={40} className="h-full w-auto" />
-              </div>
-              <div className="font-bold text-xl relative">
-                <span>TRUST</span>
-                <motion.span
-                  className="text-[#ff7145] mx-1"
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    y: [0, -1, 0],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Number.POSITIVE_INFINITY,
-                    repeatType: "reverse",
-                  }}
-                >
-                  &
-                </motion.span>
-                <span>SHOOT</span>
+                <Image src="/logo_svg.svg" alt="Trust & Shoot Logo" width={50} height={40} className="h-full w-auto" />
               </div>
             </Link>
           </motion.div>
