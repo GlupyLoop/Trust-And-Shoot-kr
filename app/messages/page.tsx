@@ -12,6 +12,7 @@ import useConversation from "@/app/hooks/useConversation"
 import { useWindowSize } from "@/app/hooks/useWindowSize"
 import AnimatedSection from "@/components/ui/animated-section"
 import { markMessagesAsRead } from "@/lib/messaging"
+import MessageHeader from "@/components/message-header"
 
 export default function MessagesPage() {
   const { user, loading: authLoading } = useAuth()
@@ -110,7 +111,7 @@ export default function MessagesPage() {
               <div className="w-full md:w-2/3 flex flex-col">
                 {currentConversationId ? (
                   <>
-                    <Header conversationId={currentConversationId} handleBackToList={handleBackToList} />
+                    <MessageHeader conversationId={currentConversationId} handleBackToList={handleBackToList} />
                     <ConversationBody conversationId={currentConversationId} windowSize={windowSize} />
                     <Form conversationId={currentConversationId} />
                   </>

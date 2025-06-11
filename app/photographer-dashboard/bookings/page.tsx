@@ -440,7 +440,7 @@ export default function PhotographerBookingsPage() {
                     </div>
                   ) : (
                     <motion.div
-                      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4 bg-gradient-to-br from-[#1a1a1a]/50 to-[#222]/50 rounded-xl border border-[#2a2a2a]/50"
+                      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
                       variants={containerVariants}
                       initial="hidden"
                       animate="visible"
