@@ -231,17 +231,78 @@ export type GoogleAuthResult = {
   profileComplete?: boolean
 }
 
-// Fonction pour envoyer un email de vérification
+// Fonction pour envoyer un email de vérification avec diagnostics améliorés
 export const sendVerificationEmail = async (user: User): Promise<void> => {
   try {
-    // Utiliser la fonction importée de firebase/auth
-    await sendEmailVerification(user, {
-      url:
-        typeof window !== "undefined" ? `${window.location.origin}/login` : "https://trust-and-shoot.vercel.app/login",
+    console.log("Attempting to send verification email to:", user.email)
+    console.log("User emailVerified status:", user.emailVerified)
+    console.log("User providerData:", user.providerData)
+
+    // Vérifier si l'utilisateur existe et n'est pas déjà vérifié
+    if (!user) {
+      throw new Error("No user provided")
+    }
+
+    if (user.emailVerified) {
+      console.log("User email is already verified")
+      return
+    }
+
+    // Construire l'URL de continuation
+    const continueUrl =
+      typeof window !== "undefined" ? `${window.location.origin}/login` : "https://trust-and-shoot.vercel.app/login"
+
+    console.log("Continue URL:", continueUrl)
+
+    // Configuration de l'email de vérification
+    const actionCodeSettings = {
+      url: continueUrl,
+      handleCodeInApp: false, // L'utilisateur sera redirigé vers l'URL après vérification
+    }
+
+    // Envoyer l'email de vérification
+    await sendEmailVerification(user, actionCodeSettings)
+    console.log("Verification email sent successfully to:", user.email)
+  } catch (error: any) {
+    console.error("Detailed error sending verification email:", {
+      code: error.code,
+      message: error.message,
+      stack: error.stack,
+      userEmail: user?.email,
+      userUid: user?.uid,
     })
-  } catch (error) {
-    console.error("Error sending verification email:", error)
-    throw error
+
+    // Fournir des messages d'erreur plus spécifiques
+    let errorMessage = "Erreur lors de l'envoi de l'email de vérification"
+
+    switch (error.code) {
+      case "auth/too-many-requests":
+        errorMessage = "Trop de demandes d'email envoyées. Veuillez attendre quelques minutes avant de réessayer."
+        break
+      case "auth/user-disabled":
+        errorMessage = "Ce compte utilisateur a été désactivé."
+        break
+      case "auth/user-not-found":
+        errorMessage = "Utilisateur non trouvé."
+        break
+      case "auth/invalid-email":
+        errorMessage = "Adresse email invalide."
+        break
+      case "auth/network-request-failed":
+        errorMessage = "Erreur de connexion réseau. Vérifiez votre connexion internet."
+        break
+      case "auth/internal-error":
+        errorMessage = "Erreur interne du serveur. Veuillez réessayer plus tard."
+        break
+      default:
+        if (error.message) {
+          errorMessage = `Erreur: ${error.message}`
+        }
+    }
+
+    const enhancedError = new Error(errorMessage)
+    enhancedError.name = error.code || "EmailVerificationError"
+    throw enhancedError
   }
 }
 
@@ -258,7 +319,7 @@ export const sendPasswordResetEmailToUser = async (email: string): Promise<void>
   }
 }
 
-// Modifiez la fonction registerUser pour envoyer automatiquement un email de vérification
+// Modifiez la fonction registerUser pour une meilleure gestion d'erreur
 export const registerUser = async (
   email: string,
   password: string,
@@ -266,8 +327,11 @@ export const registerUser = async (
   displayName?: string,
 ): Promise<UserData> => {
   try {
+    console.log("Starting user registration for:", email)
+
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     const user = userCredential.user
+    console.log("User created successfully:", user.uid)
 
     // Create user profile in Firestore first
     const userData: UserData = {
@@ -277,24 +341,32 @@ export const registerUser = async (
       role,
       createdAt: new Date(),
       profileComplete: false,
-      emailVerified: false, // Ajout d'un champ pour suivre l'état de vérification
+      emailVerified: false,
     }
 
     await setDoc(doc(db, "users", user.uid), userData)
+    console.log("User profile created in Firestore")
 
-    // Envoyer un email de vérification après avoir créé le profil
+    // Attendre un court délai avant d'envoyer l'email
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Envoyer un email de vérification
     try {
       await sendVerificationEmail(user)
-      console.log("Verification email sent successfully")
-    } catch (emailError) {
-      console.error("Error sending verification email:", emailError)
-      // Ne pas faire échouer l'inscription si l'email de vérification échoue
-      // L'utilisateur pourra le renvoyer plus tard
+      console.log("Verification email sent successfully during registration")
+    } catch (emailError: any) {
+      console.error("Failed to send verification email during registration:", emailError)
+      // Ne pas faire échouer l'inscription, mais logger l'erreur
+      // L'utilisateur pourra renvoyer l'email plus tard
     }
 
     return userData
-  } catch (error) {
-    console.error("Error registering user:", error)
+  } catch (error: any) {
+    console.error("Error during user registration:", {
+      code: error.code,
+      message: error.message,
+      email: email,
+    })
     throw error
   }
 }

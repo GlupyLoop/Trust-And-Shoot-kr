@@ -85,16 +85,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  // Fonction pour renvoyer l'email de vérification
+  // Fonction pour renvoyer l'email de vérification avec gestion d'erreur améliorée
   const resendVerificationEmail = async () => {
     if (user && !user.emailVerified) {
       try {
-        await sendVerificationEmail(user)
+        console.log("Attempting to resend verification email for user:", user.email)
+
+        // Recharger l'utilisateur pour obtenir les dernières informations
+        await user.reload()
+        const refreshedUser = auth.currentUser
+
+        if (!refreshedUser) {
+          throw new Error("Utilisateur non trouvé après rechargement")
+        }
+
+        if (refreshedUser.emailVerified) {
+          console.log("Email already verified after reload")
+          setIsEmailVerified(true)
+          return true
+        }
+
+        await sendVerificationEmail(refreshedUser)
+        console.log("Verification email resent successfully")
         return true
-      } catch (err) {
-        console.error("Error resending verification email:", err)
-        throw err
+      } catch (err: any) {
+        console.error("Error resending verification email:", {
+          code: err.code,
+          message: err.message,
+          name: err.name,
+        })
+
+        // Relancer l'erreur avec le message amélioré
+        throw new Error(err.message || "Erreur lors de l'envoi de l'email. Veuillez réessayer.")
       }
+    } else {
+      throw new Error("Aucun utilisateur connecté ou email déjà vérifié")
     }
   }
 

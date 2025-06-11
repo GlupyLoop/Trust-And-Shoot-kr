@@ -20,11 +20,21 @@ export default function EmailVerificationBanner() {
     try {
       setSending(true)
       setError(null)
+
+      console.log("Resending verification email from banner")
       await resendVerificationEmail()
+
       setSent(true)
       setTimeout(() => setSent(false), 5000) // Réinitialiser après 5 secondes
     } catch (err: any) {
-      setError(err.message || "Échec de l'envoi de l'email")
+      console.error("Error in email verification banner:", err)
+
+      // Afficher un message d'erreur plus spécifique
+      const errorMessage = err.message || "Échec de l'envoi de l'email. Veuillez réessayer."
+      setError(errorMessage)
+
+      // Effacer l'erreur après 10 secondes
+      setTimeout(() => setError(null), 10000)
     } finally {
       setSending(false)
     }

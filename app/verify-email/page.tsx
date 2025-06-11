@@ -36,18 +36,30 @@ export default function VerifyEmailPage() {
     }
   }, [countdown])
 
-  // Fonction pour renvoyer l'email de vérification
+  // Fonction pour renvoyer l'email de vérification avec gestion d'erreur améliorée
   const handleResendEmail = async () => {
     if (countdown > 0) return
 
     setResendLoading(true)
+    setError(null)
+
     try {
+      console.log("Attempting to resend verification email from verify page")
       await resendVerificationEmail()
+
       toast.success("Email de vérification envoyé avec succès!")
       setCountdown(60) // Set 60 second cooldown
-    } catch (error) {
+      setSent(true)
+      setTimeout(() => setSent(false), 5000)
+    } catch (error: any) {
       console.error("Error resending verification email:", error)
-      toast.error("Erreur lors de l'envoi de l'email. Veuillez réessayer.")
+
+      const errorMessage = error.message || "Erreur lors de l'envoi de l'email. Veuillez réessayer."
+      setError(errorMessage)
+      toast.error(errorMessage)
+
+      // Effacer l'erreur après 10 secondes
+      setTimeout(() => setError(null), 10000)
     } finally {
       setResendLoading(false)
     }
