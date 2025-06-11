@@ -127,7 +127,7 @@ export default function MainHeroSection() {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 container mx-auto px-4 py-26 flex flex-col items-center justify-center min-h-[80vh] text-center">
+      <div className="relative z-10 container mx-auto px-4 py-32 flex flex-col items-center justify-center min-h-[80vh] text-center">
         <div className="max-w-4xl mx-auto">
           {/* Main headline */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
