@@ -1,34 +1,37 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import type { BookingRequest, TimeSlot } from "@/types/booking"
-import { acceptBookingRequest, rejectBookingRequest } from "@/lib/bookings"
-import { toast } from "sonner"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import {
-  Calendar,
   Clock,
   MapPin,
-  Euro,
+  Calendar,
   User,
+  Check,
+  X,
+  MessageSquare,
+  Euro,
+  AlertCircle,
   CheckCircle,
   XCircle,
-  AlertCircle,
-  MessageSquare,
-  Eye,
 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import type { BookingRequest, TimeSlot } from "@/types/booking"
+import { acceptBookingRequest, rejectBookingRequest } from "@/lib/bookings"
+import { toast } from "sonner"
 import { motion } from "framer-motion"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface BookingRequestCardProps {
   request: BookingRequest
   timeSlot: TimeSlot
-  cosplayerName: string
+  cosplayerName?: string
+  photographerName?: string
   isPhotographer?: boolean
   onStatusChange?: () => void
 }
@@ -37,15 +40,16 @@ export function BookingRequestCard({
   request,
   timeSlot,
   cosplayerName,
+  photographerName,
   isPhotographer = false,
   onStatusChange,
 }: BookingRequestCardProps) {
-  const [loading, setLoading] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
 
   const handleAccept = async () => {
     try {
-      setLoading(true)
+      setIsProcessing(true)
       await acceptBookingRequest(request.id)
       toast.success("Demande de réservation acceptée")
       if (onStatusChange) {
@@ -55,14 +59,14 @@ export function BookingRequestCard({
       console.error("Error accepting booking request:", error)
       toast.error("Erreur lors de l'acceptation de la demande")
     } finally {
-      setLoading(false)
+      setIsProcessing(false)
     }
   }
 
   const handleReject = async () => {
     if (confirm("Êtes-vous sûr de vouloir rejeter cette demande ?")) {
       try {
-        setLoading(true)
+        setIsProcessing(true)
         await rejectBookingRequest(request.id)
         toast.success("Demande de réservation rejetée")
         if (onStatusChange) {
@@ -72,7 +76,7 @@ export function BookingRequestCard({
         console.error("Error rejecting booking request:", error)
         toast.error("Erreur lors du rejet de la demande")
       } finally {
-        setLoading(false)
+        setIsProcessing(false)
       }
     }
   }
@@ -81,239 +85,347 @@ export function BookingRequestCard({
     switch (request.status) {
       case "pending":
         return {
-          color: "bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-yellow-500/40",
-          textColor: "text-yellow-200",
-          icon: <AlertCircle className="h-4 w-4" />,
-          label: "En attente",
+          badge: (
+            <Badge className="bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/30">
+              <AlertCircle size={12} className="mr-1" />
+              En attente
+            </Badge>
+          ),
+          cardClass: "border-yellow-500/20 hover:border-yellow-500/40 hover:shadow-yellow-500/10",
+          gradient: "from-yellow-500/5 to-amber-500/5",
+          icon: <AlertCircle className="h-5 w-5 text-yellow-400" />,
+          color: "text-yellow-400",
+          bgColor: "bg-yellow-500/10",
         }
       case "accepted":
         return {
-          color: "bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-green-500/40",
-          textColor: "text-green-200",
-          icon: <CheckCircle className="h-4 w-4" />,
-          label: "Acceptée",
+          badge: (
+            <Badge className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30">
+              <CheckCircle size={12} className="mr-1" />
+              Acceptée
+            </Badge>
+          ),
+          cardClass: "border-green-500/20 hover:border-green-500/40 hover:shadow-green-500/10",
+          gradient: "from-green-500/5 to-emerald-500/5",
+          icon: <CheckCircle className="h-5 w-5 text-green-400" />,
+          color: "text-green-400",
+          bgColor: "bg-green-500/10",
         }
       case "rejected":
         return {
-          color: "bg-gradient-to-r from-red-500/20 to-rose-500/20 border-red-500/40",
-          textColor: "text-red-200",
-          icon: <XCircle className="h-4 w-4" />,
-          label: "Rejetée",
+          badge: (
+            <Badge className="bg-gradient-to-r from-red-500/20 to-rose-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30">
+              <XCircle size={12} className="mr-1" />
+              Rejetée
+            </Badge>
+          ),
+          cardClass: "border-red-500/20 hover:border-red-500/40 hover:shadow-red-500/10",
+          gradient: "from-red-500/5 to-rose-500/5",
+          icon: <XCircle className="h-5 w-5 text-red-400" />,
+          color: "text-red-400",
+          bgColor: "bg-red-500/10",
+        }
+      case "cancelled":
+        return {
+          badge: (
+            <Badge className="bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-400 border-gray-500/30 hover:bg-gray-500/30">
+              <XCircle size={12} className="mr-1" />
+              Annulée
+            </Badge>
+          ),
+          cardClass: "border-gray-500/20 hover:border-gray-500/40 hover:shadow-gray-500/10",
+          gradient: "from-gray-500/5 to-slate-500/5",
+          icon: <XCircle className="h-5 w-5 text-gray-400" />,
+          color: "text-gray-400",
+          bgColor: "bg-gray-500/10",
         }
       default:
         return {
-          color: "bg-gradient-to-r from-gray-500/20 to-gray-600/20 border-gray-500/40",
-          textColor: "text-gray-200",
-          icon: <AlertCircle className="h-4 w-4" />,
-          label: "Inconnu",
+          badge: null,
+          cardClass: "border-[#2a2a2a] hover:border-[#3a3a3a]",
+          gradient: "from-[#1a1a1a] to-[#1e1e1e]",
+          icon: <AlertCircle className="h-5 w-5 text-gray-400" />,
+          color: "text-gray-400",
+          bgColor: "bg-gray-500/10",
         }
     }
   }
 
   const statusConfig = getStatusConfig()
 
-  const getInitials = (name: string) => {
+  const formatDate = (date: Date | string) => {
+    if (typeof date === "string") {
+      date = new Date(date)
+    }
+    return format(date, "EEEE d MMMM yyyy", { locale: fr })
+  }
+
+  const formatRequestDate = (date: Date | string) => {
+    if (typeof date === "string") {
+      date = new Date(date)
+    }
+    return format(date, "d MMM yyyy", { locale: fr })
+  }
+
+  const getInitials = (name?: string) => {
+    if (!name) return "?"
     return name
       .split(" ")
-      .map((word) => word[0])
+      .map((n) => n[0])
       .join("")
       .toUpperCase()
+      .substring(0, 2)
   }
 
   return (
     <>
       <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ duration: 0.2 }} className="group">
-        <Card className="bg-gradient-to-br from-[#1a1a1a] via-[#1e1e1e] to-[#1a1a1a] border border-[#2a2a2a]/50 hover:border-[#ff7145]/30 transition-all duration-300 rounded-2xl overflow-hidden shadow-xl backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-start justify-between">
+        <Card
+          className={`overflow-hidden bg-gradient-to-br ${statusConfig.gradient} border ${statusConfig.cardClass} transition-all duration-300 hover:shadow-xl`}
+        >
+          <CardHeader className="pb-3">
+            <div className="flex justify-between items-start">
               <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Avatar className="h-12 w-12 border-2 border-[#ff7145]/50 shadow-lg shadow-[#ff7145]/20">
-                    <AvatarImage
-                      src={`/placeholder.svg?height=48&width=48&query=cosplayer-${cosplayerName}`}
-                      alt={cosplayerName}
-                    />
-                    <AvatarFallback className="bg-gradient-to-br from-[#ff7145] to-[#ff8d69] text-white font-bold">
-                      {getInitials(cosplayerName)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#1a1a1a] rounded-full flex items-center justify-center border border-[#2a2a2a]">
-                    {statusConfig.icon}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-bold text-[#fffbea] group-hover:text-[#ff7145] transition-colors">
-                    {cosplayerName}
-                  </h3>
-                  <p className="text-sm text-gray-400">
-                    Demande du {format(request.requestDate, "d MMMM yyyy", { locale: fr })}
-                  </p>
+                <Avatar className="h-10 w-10 border-2 border-[#ff7145]/50 shadow-lg shadow-[#ff7145]/10">
+                  <AvatarImage
+                    src={`/abstract-geometric-shapes.png?height=40&width=40&query=${isPhotographer ? cosplayerName : photographerName}`}
+                  />
+                  <AvatarFallback className="bg-gradient-to-br from-[#ff7145] to-[#ff8d69] text-white">
+                    {getInitials(isPhotographer ? cosplayerName : photographerName)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="space-y-1">
+                  <CardTitle className="text-lg font-bold text-white group-hover:text-[#ff7145] transition-colors">
+                    {isPhotographer ? cosplayerName : photographerName}
+                  </CardTitle>
+                  <CardDescription className="flex items-center text-gray-400">
+                    <Calendar size={14} className="mr-1 text-[#ff7145]" />
+                    Demande du {formatRequestDate(request.requestDate)}
+                  </CardDescription>
                 </div>
               </div>
-
-              <Badge className={`${statusConfig.color} ${statusConfig.textColor} border font-medium`}>
-                {statusConfig.icon}
-                <span className="ml-1">{statusConfig.label}</span>
-              </Badge>
+              {statusConfig.badge}
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-4">
-            {/* Time Slot Info */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 p-3 bg-[#2a2a2a]/50 rounded-xl border border-[#3a3a3a]/30">
-                <Calendar className="h-4 w-4 text-[#ff7145] flex-shrink-0" />
-                <span className="text-sm text-[#fffbea] truncate">
-                  {format(new Date(timeSlot.date), "d MMM", { locale: fr })}
-                </span>
+          <CardContent className="pb-4">
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-2 p-3 bg-[#2a2a2a]/50 rounded-lg">
+                  <Calendar className="h-4 w-4 text-[#ff7145]" />
+                  <div className="text-sm text-white overflow-hidden text-ellipsis whitespace-nowrap">
+                    {formatDate(timeSlot.date)}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 p-3 bg-[#2a2a2a]/50 rounded-lg">
+                  <Clock className="h-4 w-4 text-[#ff7145]" />
+                  <div className="text-sm text-white">
+                    {timeSlot.startTime} - {timeSlot.endTime}
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 p-3 bg-[#2a2a2a]/50 rounded-xl border border-[#3a3a3a]/30">
-                <Clock className="h-4 w-4 text-[#ff7145] flex-shrink-0" />
-                <span className="text-sm text-[#fffbea]">
-                  {timeSlot.startTime} - {timeSlot.endTime}
-                </span>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-2 p-3 bg-[#2a2a2a]/50 rounded-lg">
+                  <Euro className="h-4 w-4 text-[#ff7145]" />
+                  <div className="text-sm text-white">{timeSlot.price} €</div>
+                </div>
+
+                <div className="flex items-center gap-2 p-3 bg-[#2a2a2a]/50 rounded-lg">
+                  <MapPin className="h-4 w-4 text-[#ff7145]" />
+                  <div className="text-sm text-white overflow-hidden text-ellipsis whitespace-nowrap">
+                    {timeSlot.location}
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center gap-2 p-3 bg-[#2a2a2a]/50 rounded-xl border border-[#3a3a3a]/30">
-                <Euro className="h-4 w-4 text-[#ff7145] flex-shrink-0" />
-                <span className="text-sm font-semibold text-[#fffbea]">{timeSlot.price}€</span>
+              <div className="flex items-center gap-2 p-3 bg-[#2a2a2a]/50 rounded-lg">
+                <User className="h-4 w-4 text-[#ff7145]" />
+                <div className="text-sm text-white overflow-hidden text-ellipsis whitespace-nowrap">
+                  Cosplay: {request.cosplayCharacter}
+                </div>
               </div>
-
-              <div className="flex items-center gap-2 p-3 bg-[#2a2a2a]/50 rounded-xl border border-[#3a3a3a]/30">
-                <MapPin className="h-4 w-4 text-[#ff7145] flex-shrink-0" />
-                <span className="text-sm text-[#fffbea] truncate">{timeSlot.location}</span>
-              </div>
-            </div>
-
-            {/* Cosplay Character */}
-            <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-[#ff7145]/10 to-[#ff8d69]/10 rounded-xl border border-[#ff7145]/20">
-              <User className="h-4 w-4 text-[#ff7145] flex-shrink-0" />
-              <div className="text-sm text-[#fffbea]">
-                <span className="text-gray-400">Cosplay:</span>{" "}
-                <span className="font-medium">{request.cosplayCharacter}</span>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-2 pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowDetails(true)}
-                className="flex-1 border-[#3a3a3a] bg-[#2a2a2a]/50 text-[#fffbea] hover:bg-[#3a3a3a] hover:border-[#ff7145]/50 transition-all"
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                Détails
-              </Button>
-
-              {isPhotographer && request.status === "pending" && (
-                <>
-                  <Button
-                    size="sm"
-                    onClick={handleAccept}
-                    disabled={loading}
-                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-500 text-white shadow-lg shadow-green-500/25"
-                  >
-                    <CheckCircle className="h-4 w-4 mr-1" />
-                    Accepter
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleReject}
-                    disabled={loading}
-                    className="border-red-500/50 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:border-red-400"
-                  >
-                    <XCircle className="h-4 w-4 mr-1" />
-                    Refuser
-                  </Button>
-                </>
-              )}
             </div>
           </CardContent>
+
+          <CardFooter className="pt-0 flex flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDetails(true)}
+              className="w-full sm:w-auto border-[#3a3a3a] hover:bg-[#2a2a2a] hover:text-[#ff7145]"
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Détails
+            </Button>
+
+            {isPhotographer && request.status === "pending" && (
+              <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleReject}
+                        disabled={isProcessing}
+                        className="flex-1 sm:flex-none bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600"
+                      >
+                        <X className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Rejeter</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Rejeter la demande</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="flex-1 sm:flex-none bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                        onClick={handleAccept}
+                        disabled={isProcessing}
+                      >
+                        <Check className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Accepter</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Accepter la demande</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            )}
+          </CardFooter>
         </Card>
       </motion.div>
 
-      {/* Details Modal */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-gradient-to-br from-[#1a1a1a] to-[#1e1e1e] border border-[#2a2a2a] text-[#fffbea] max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Détails de la demande</DialogTitle>
+        <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-[#1a1a1a] to-[#222] border border-[#2a2a2a] shadow-xl">
+          <DialogHeader className="space-y-3">
+            <div className={`w-12 h-12 rounded-full ${statusConfig.bgColor} flex items-center justify-center mx-auto`}>
+              {statusConfig.icon}
+            </div>
+            <DialogTitle className="text-center text-xl">Détails de la réservation</DialogTitle>
+            <div className={`text-center ${statusConfig.color} font-medium`}>
+              {request.status === "pending" && "En attente de confirmation"}
+              {request.status === "accepted" && "Réservation confirmée"}
+              {request.status === "rejected" && "Réservation rejetée"}
+              {request.status === "cancelled" && "Réservation annulée"}
+            </div>
           </DialogHeader>
 
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm text-gray-400 font-medium">Cosplayer</label>
-                <p className="text-[#fffbea] font-semibold">{cosplayerName}</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-400 font-medium">Statut</label>
-                <Badge className={`${statusConfig.color} ${statusConfig.textColor} border font-medium mt-1`}>
-                  {statusConfig.icon}
-                  <span className="ml-1">{statusConfig.label}</span>
-                </Badge>
+          <div className="space-y-4 mt-2">
+            <div className="bg-gradient-to-r from-[#2a2a2a] to-[#252525] p-4 rounded-lg border border-[#3a3a3a]/50">
+              <h3 className="font-medium mb-3 text-[#ff7145]">Informations générales</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-3 bg-[#1a1a1a]/70 p-2 rounded">
+                  <User className="h-4 w-4 text-[#ff7145]" />
+                  <span>
+                    {isPhotographer ? "Cosplayer: " : "Photographe: "}
+                    <span className="font-medium text-white">{isPhotographer ? cosplayerName : photographerName}</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 bg-[#1a1a1a]/70 p-2 rounded">
+                  <Calendar className="h-4 w-4 text-[#ff7145]" />
+                  <span>
+                    Date: <span className="font-medium text-white">{formatDate(timeSlot.date)}</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 bg-[#1a1a1a]/70 p-2 rounded">
+                  <Clock className="h-4 w-4 text-[#ff7145]" />
+                  <span>
+                    Horaire:{" "}
+                    <span className="font-medium text-white">
+                      {timeSlot.startTime} - {timeSlot.endTime}
+                    </span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 bg-[#1a1a1a]/70 p-2 rounded">
+                  <MapPin className="h-4 w-4 text-[#ff7145]" />
+                  <span>
+                    Lieu: <span className="font-medium text-white">{timeSlot.location}</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 bg-[#1a1a1a]/70 p-2 rounded">
+                  <Euro className="h-4 w-4 text-[#ff7145]" />
+                  <span>
+                    Prix: <span className="font-medium text-white">{timeSlot.price} €</span>
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className="text-sm text-gray-400 font-medium">Personnage cosplayé</label>
-              <p className="text-[#fffbea] font-semibold">{request.cosplayCharacter}</p>
+            <div className="bg-gradient-to-r from-[#2a2a2a] to-[#252525] p-4 rounded-lg border border-[#3a3a3a]/50">
+              <h3 className="font-medium mb-3 text-[#ff7145]">Détails du cosplay</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-3 bg-[#1a1a1a]/70 p-2 rounded">
+                  <User className="h-4 w-4 text-[#ff7145]" />
+                  <span>
+                    Personnage: <span className="font-medium text-white">{request.cosplayCharacter}</span>
+                  </span>
+                </div>
+                {request.cosplayReference && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Référence:</span>
+                    </div>
+                    <a
+                      href={request.cosplayReference}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full overflow-hidden rounded-lg border border-[#3a3a3a] hover:border-[#ff7145] transition-colors"
+                    >
+                      <img
+                        src={request.cosplayReference || "/placeholder.svg"}
+                        alt="Référence cosplay"
+                        className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </a>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {request.description && (
-              <div>
-                <label className="text-sm text-gray-400 font-medium">Description</label>
-                <p className="text-[#fffbea] leading-relaxed">{request.description}</p>
+            {request.message && (
+              <div className="bg-gradient-to-r from-[#2a2a2a] to-[#252525] p-4 rounded-lg border border-[#3a3a3a]/50">
+                <h3 className="font-medium mb-3 text-[#ff7145]">Message</h3>
+                <div className="bg-[#1a1a1a]/70 p-3 rounded border border-[#3a3a3a]/30">
+                  <p className="text-sm whitespace-pre-wrap text-gray-300 leading-relaxed">{request.message}</p>
+                </div>
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm text-gray-400 font-medium">Date</label>
-                <p className="text-[#fffbea]">{format(new Date(timeSlot.date), "d MMMM yyyy", { locale: fr })}</p>
+            {isPhotographer && request.status === "pending" && (
+              <div className="flex gap-2 mt-4">
+                <Button
+                  variant="destructive"
+                  className="flex-1 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600"
+                  onClick={handleReject}
+                  disabled={isProcessing}
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Rejeter
+                </Button>
+                <Button
+                  variant="default"
+                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                  onClick={handleAccept}
+                  disabled={isProcessing}
+                >
+                  <Check className="h-4 w-4 mr-2" />
+                  Accepter
+                </Button>
               </div>
-              <div>
-                <label className="text-sm text-gray-400 font-medium">Horaire</label>
-                <p className="text-[#fffbea]">
-                  {timeSlot.startTime} - {timeSlot.endTime}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm text-gray-400 font-medium">Prix</label>
-                <p className="text-[#fffbea] font-semibold">{timeSlot.price}€</p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-400 font-medium">Lieu</label>
-                <p className="text-[#fffbea]">{timeSlot.location}</p>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-400 font-medium">Date de demande</label>
-              <p className="text-[#fffbea]">{format(request.requestDate, "d MMMM yyyy à HH:mm", { locale: fr })}</p>
-            </div>
+            )}
           </div>
-
-          <DialogFooter className="gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setShowDetails(false)}
-              className="border-[#3a3a3a] bg-[#2a2a2a] text-[#fffbea] hover:bg-[#3a3a3a] hover:border-[#ff7145]/50"
-            >
-              Fermer
-            </Button>
-            <Button className="bg-gradient-to-r from-[#ff7145] to-[#ff8d69] hover:from-[#ff8d69] hover:to-[#ff7145] text-white">
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Contacter
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

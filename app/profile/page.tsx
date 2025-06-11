@@ -35,26 +35,13 @@ export default function ProfilePage() {
   return (
     <>
       <Header />
-      <main className="relative container mx-auto px-4 py-8 pt-20 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-5 pointer-events-none"
-          style={{
-            backgroundImage: "url(/Design_2.svg)",
-            backgroundSize: "800px 800px",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-            transform: "rotate(-15deg) scale(1.2)",
-            transformOrigin: "center",
-          }}
-        />
-        <div className="relative z-10">
-          {shouldPromptUsernameUpdate && userData && <UsernameUpdateBanner userRole={userData.role} />}
-          {userData?.role === "photographer" ? (
-            <PhotographerProfileForm userData={userData} />
-          ) : (
-            <CosplayerProfileForm userData={userData} />
-          )}
-        </div>
+      <main className="container mx-auto px-4 py-8 pt-20">
+        {shouldPromptUsernameUpdate && userData && <UsernameUpdateBanner userRole={userData.role} />}
+        {userData?.role === "photographer" ? (
+          <PhotographerProfileForm userData={userData} />
+        ) : (
+          <CosplayerProfileForm userData={userData} />
+        )}
       </main>
     </>
   )

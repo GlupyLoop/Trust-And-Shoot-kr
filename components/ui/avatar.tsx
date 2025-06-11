@@ -21,17 +21,7 @@ const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
 >(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
-    ref={ref}
-    className={cn("aspect-square h-full w-full object-cover", className)}
-    onError={(e) => {
-      // Fallback en cas d'erreur de chargement de l'image Firebase
-      const target = e.target as HTMLImageElement
-      target.style.display = "none"
-    }}
-    crossOrigin="anonymous"
-    {...props}
-  />
+  <AvatarPrimitive.Image ref={ref} className={cn("aspect-square h-full w-full", className)} {...props} />
 ))
 AvatarImage.displayName = AvatarPrimitive.Image.displayName
 

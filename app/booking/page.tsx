@@ -160,107 +160,60 @@ export default function BookingPage() {
           {/* Search and Filters */}
           <AnimatedSection delay={0.1}>
             <motion.div
-              className="bg-gradient-to-br from-[#1a1a1a] via-[#1e1e1e] to-[#1a1a1a] rounded-3xl p-8 mb-12 border border-[#2a2a2a]/50 shadow-2xl backdrop-blur-sm"
-              whileHover={{ boxShadow: "0 25px 50px -12px rgba(255, 113, 69, 0.15)" }}
+              className="bg-gradient-to-r from-[#1a1a1a] via-[#1e1e1e] to-[#1a1a1a] rounded-2xl p-8 mb-12 border border-[#2a2a2a] shadow-2xl"
+              whileHover={{ boxShadow: "0 25px 50px -12px rgba(255, 113, 69, 0.1)" }}
               transition={{ duration: 0.3 }}
             >
-              <div className="flex flex-col space-y-6">
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-[#fffbea] mb-2">Trouvez votre photographe idéal</h2>
-                  <p className="text-gray-400">Filtrez par localisation, style et disponibilité</p>
+              <div className="flex flex-col lg:flex-row gap-6">
+                {/* Search */}
+                <div className="relative flex-grow">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    placeholder="Rechercher par nom, style ou spécialité..."
+                    className="w-full bg-[#2a2a2a] rounded-xl pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-[#ff7145] focus:bg-[#2e2e2e] transition-all text-white placeholder-gray-400"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Search */}
-                  <div className="lg:col-span-2">
-                    <div className="relative group">
-                      <Search
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-[#ff7145] transition-colors"
-                        size={20}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Rechercher par nom, style ou spécialité..."
-                        className="w-full bg-[#2a2a2a]/80 backdrop-blur-sm rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-[#ff7145]/50 focus:bg-[#2e2e2e] transition-all text-[#fffbea] placeholder-gray-400 border border-[#3a3a3a]/50 focus:border-[#ff7145]/50"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Location Filter */}
-                  <div className="relative group">
-                    <MapPin
-                      className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-[#ff7145] transition-colors"
-                      size={20}
-                    />
-                    <select
-                      className="w-full bg-[#2a2a2a]/80 backdrop-blur-sm rounded-2xl pl-12 pr-10 py-4 appearance-none focus:outline-none focus:ring-2 focus:ring-[#ff7145]/50 text-[#fffbea] border border-[#3a3a3a]/50 focus:border-[#ff7145]/50 cursor-pointer"
-                      value={selectedLocation || ""}
-                      onChange={(e) => setSelectedLocation(e.target.value || null)}
-                    >
-                      <option value="">Toutes les villes</option>
-                      {locations.map((location) => (
-                        <option key={location} value={location}>
-                          {location}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
-                      size={20}
-                    />
-                  </div>
+                {/* Location Filter */}
+                <div className="relative min-w-[220px]">
+                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <select
+                    className="w-full bg-[#2a2a2a] rounded-xl pl-12 pr-4 py-4 appearance-none focus:outline-none focus:ring-2 focus:ring-[#ff7145] text-white"
+                    value={selectedLocation || ""}
+                    onChange={(e) => setSelectedLocation(e.target.value || null)}
+                  >
+                    <option value="">Toutes les villes</option>
+                    {locations.map((location) => (
+                      <option key={location} value={location}>
+                        {location}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
                 </div>
 
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-[#2a2a2a]/50">
-                  <div className="flex items-center gap-4">
-                    <div className="relative group">
-                      <Filter
-                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-[#ff7145] transition-colors"
-                        size={16}
-                      />
-                      <select
-                        className="bg-[#2a2a2a]/60 rounded-xl pl-10 pr-8 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-[#ff7145]/50 text-[#fffbea] text-sm border border-[#3a3a3a]/30 cursor-pointer"
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value as "rating" | "price" | "name")}
-                      >
-                        <option value="rating">Mieux notés</option>
-                        <option value="price">Prix croissant</option>
-                        <option value="name">Nom A-Z</option>
-                      </select>
-                      <ChevronDown
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
-                        size={14}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-400 mr-2">Affichage:</span>
-                    <div className="flex bg-[#2a2a2a]/60 rounded-xl p-1 border border-[#3a3a3a]/30">
-                      <button
-                        onClick={() => setViewMode("grid")}
-                        className={`p-2 rounded-lg transition-all ${
-                          viewMode === "grid"
-                            ? "bg-gradient-to-r from-[#ff7145] to-[#ff8d69] text-white shadow-lg"
-                            : "text-gray-400 hover:text-[#fffbea] hover:bg-[#3a3a3a]/50"
-                        }`}
-                      >
-                        <Grid size={16} />
-                      </button>
-                      <button
-                        onClick={() => setViewMode("list")}
-                        className={`p-2 rounded-lg transition-all ${
-                          viewMode === "list"
-                            ? "bg-gradient-to-r from-[#ff7145] to-[#ff8d69] text-white shadow-lg"
-                            : "text-gray-400 hover:text-[#fffbea] hover:bg-[#3a3a3a]/50"
-                        }`}
-                      >
-                        <List size={16} />
-                      </button>
-                    </div>
-                  </div>
+                {/* Sort */}
+                <div className="relative min-w-[180px]">
+                  <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <select
+                    className="w-full bg-[#2a2a2a] rounded-xl pl-12 pr-4 py-4 appearance-none focus:outline-none focus:ring-2 focus:ring-[#ff7145] text-white"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as "rating" | "price" | "name")}
+                  >
+                    <option value="rating">Mieux notés</option>
+                    <option value="price">Prix croissant</option>
+                    <option value="name">Nom A-Z</option>
+                  </select>
+                  <ChevronDown
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={20}
+                  />
                 </div>
               </div>
             </motion.div>
@@ -279,7 +232,7 @@ export default function BookingPage() {
               </div>
 
               <div className="flex items-center gap-3">
-                {/* <div className="flex bg-[#1a1a1a] rounded-lg p-1 border border-[#2a2a2a]">
+                <div className="flex bg-[#1a1a1a] rounded-lg p-1 border border-[#2a2a2a]">
                   <button
                     onClick={() => setViewMode("grid")}
                     className={`p-2 rounded-md transition-all ${
@@ -300,7 +253,7 @@ export default function BookingPage() {
                   >
                     <List size={18} />
                   </button>
-                </div> */}
+                </div>
               </div>
             </div>
           </AnimatedSection>

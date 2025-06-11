@@ -56,8 +56,12 @@ export default function MainHeroSection() {
     scrollToBrowse()
   }
 
-  const handleBookShooting = () => {
-    router.push("/booking")
+  const handleViewExamples = () => {
+    // Scroll to featured photographers section
+    const featuredSection = document.getElementById("featured-section")
+    if (featuredSection) {
+      featuredSection.scrollIntoView({ behavior: "smooth" })
+    }
   }
 
   return (
@@ -155,12 +159,12 @@ export default function MainHeroSection() {
             </button>
 
             <button
-              onClick={handleBookShooting}
+              onClick={handleViewExamples}
               className="group px-8 py-4 bg-transparent border-2 border-[#ff7145] text-[#ff7145] font-semibold rounded-full text-lg transition-all duration-300 hover:bg-[#ff7145] hover:text-white hover:scale-105 hover:shadow-xl min-w-[200px]"
             >
               <span className="flex items-center justify-center">
-                <Camera className="w-5 h-5 mr-2" />
-                Réserver un shooting
+                <Star className="w-5 h-5 mr-2" />
+                Voir Exemples
               </span>
             </button>
           </div>

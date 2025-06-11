@@ -1,232 +1,392 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { format } from "date-fns"
+import { Clock, MapPin, Euro, Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { createTimeSlot } from "@/lib/bookings"
-import { Calendar, Clock, MapPin, Euro, Plus, Loader2 } from "lucide-react"
-import { motion } from "framer-motion"
+import { toast } from "sonner"
+
+const formSchema = z.object({
+  date: z.date({
+    required_error: "Veuillez sélectionner une date",
+  }),
+  timeSlots: z
+    .array(
+      z.object({
+        startTime: z.string().min(1, "Veuillez sélectionner une heure de début"),
+        endTime: z.string().min(1, "Veuillez sélectionner une heure de fin"),
+        price: z.coerce.number().min(0, "Le prix ne peut pas être négatif"),
+        location: z.string().min(1, "Veuillez indiquer un lieu"),
+        description: z.string().optional(),
+      }),
+    )
+    .min(1, "Au moins un créneau est requis"),
+})
+
+type FormValues = z.infer<typeof formSchema>
 
 interface TimeSlotFormProps {
   photographerId: string
   onSuccess?: () => void
+  defaultValues?: Partial<FormValues>
 }
 
-export function TimeSlotForm({ photographerId, onSuccess }: TimeSlotFormProps) {
-  const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({
-    date: "",
-    startTime: "",
-    endTime: "",
-    location: "",
-    price: "",
-    description: "",
+export function TimeSlotForm({ photographerId, onSuccess, defaultValues }: TimeSlotFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      date: new Date(),
+      timeSlots: [
+        {
+          startTime: "10:00",
+          endTime: "11:00",
+          price: 50,
+          location: "À déterminer",
+          description: "",
+        },
+      ],
+      ...defaultValues,
+    },
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.date || !formData.startTime || !formData.endTime || !formData.location || !formData.price) {
+  const [timeSlots, setTimeSlots] = useState([
+    {
+      startTime: "10:00",
+      endTime: "11:00",
+      price: 50,
+      location: "À déterminer",
+      description: "",
+    },
+  ])
+
+  const addTimeSlot = () => {
+    const newTimeSlot = {
+      startTime: "10:00",
+      endTime: "11:00",
+      price: 50,
+      location: "À déterminer",
+      description: "",
+    }
+    setTimeSlots([...timeSlots, newTimeSlot])
+    const currentTimeSlots = form.getValues("timeSlots")
+    form.setValue("timeSlots", [...currentTimeSlots, newTimeSlot])
+  }
+
+  const removeTimeSlot = (index: number) => {
+    if (timeSlots.length > 1) {
+      const newTimeSlots = timeSlots.filter((_, i) => i !== index)
+      setTimeSlots(newTimeSlots)
+      form.setValue("timeSlots", newTimeSlots)
+    }
+  }
+
+  const onSubmit = async (values: FormValues) => {
+    if (!photographerId) {
+      toast.error("ID du photographe manquant")
       return
     }
 
     try {
-      setLoading(true)
-      await createTimeSlot({
-        photographerId,
-        date: new Date(formData.date),
-        startTime: formData.startTime,
-        endTime: formData.endTime,
-        location: formData.location,
-        price: Number.parseFloat(formData.price),
-        description: formData.description,
-        status: "available",
-      })
+      setIsSubmitting(true)
+      console.log("Submitting form with values:", values)
+
+      // Vérifier chaque créneau horaire
+      for (let i = 0; i < values.timeSlots.length; i++) {
+        const slot = values.timeSlots[i]
+
+        if (slot.startTime >= slot.endTime) {
+          form.setError(`timeSlots.${i}.endTime`, {
+            type: "manual",
+            message: "L'heure de fin doit être après l'heure de début",
+          })
+          return
+        }
+      }
+
+      // Vérifier que la date n'est pas dans le passé
+      const selectedDate = new Date(values.date)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      if (selectedDate < today) {
+        form.setError("date", {
+          type: "manual",
+          message: "La date ne peut pas être dans le passé",
+        })
+        return
+      }
+
+      // Créer tous les créneaux horaires
+      const promises = values.timeSlots.map((slot) =>
+        createTimeSlot({
+          photographerId,
+          date: values.date,
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          status: "available",
+          price: slot.price,
+          location: slot.location,
+          description: slot.description || "",
+        }),
+      )
+
+      await Promise.all(promises)
+      console.log("Created all time slots successfully")
+      toast.success(`${values.timeSlots.length} créneau(x) horaire(s) créé(s) avec succès`)
 
       // Reset form
-      setFormData({
-        date: "",
-        startTime: "",
-        endTime: "",
-        location: "",
-        price: "",
+      const defaultTimeSlot = {
+        startTime: "10:00",
+        endTime: "11:00",
+        price: 50,
+        location: "À déterminer",
         description: "",
-      })
+      }
 
+      form.reset({
+        date: new Date(),
+        timeSlots: [defaultTimeSlot],
+      })
+      setTimeSlots([defaultTimeSlot])
+
+      // Call success callback
       if (onSuccess) {
         onSuccess()
       }
     } catch (error) {
-      console.error("Error creating time slot:", error)
+      console.error("Error creating time slots:", error)
+      toast.error("Erreur lors de la création des créneaux horaires")
     } finally {
-      setLoading(false)
+      setIsSubmitting(false)
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+  // Générer les options d'heures (par tranches de 30 minutes)
+  const generateTimeOptions = () => {
+    const options = []
+    for (let hour = 8; hour < 22; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const formattedHour = hour.toString().padStart(2, "0")
+        const formattedMinute = minute.toString().padStart(2, "0")
+        options.push(`${formattedHour}:${formattedMinute}`)
+      }
+    }
+    return options
   }
 
+  const timeOptions = generateTimeOptions()
+  const startTime = form.watch("startTime")
+
+  // Fonction pour formater la date pour l'input date
+  const formatDateForInput = (date: Date) => {
+    return format(date, "yyyy-MM-dd")
+  }
+
+  // Fonction pour parser la date depuis l'input
+  const parseDateFromInput = (dateString: string) => {
+    return new Date(dateString + "T00:00:00")
+  }
+
+  // Date minimale (aujourd'hui)
+  const minDate = formatDateForInput(new Date())
+
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Date and Time Section */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-[#ff7145] to-[#ff8d69] rounded-full flex items-center justify-center">
-              <Calendar className="h-4 w-4 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-[#fffbea]">Date et horaires</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="date" className="text-[#fffbea] font-medium">
-                Date
-              </Label>
-              <Input
-                id="date"
-                name="date"
-                type="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-                className="bg-[#2a2a2a] border-[#3a3a3a] text-[#fffbea] focus:border-[#ff7145] focus:ring-[#ff7145]/20"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="startTime" className="text-[#fffbea] font-medium">
-                Heure de début
-              </Label>
-              <Input
-                id="startTime"
-                name="startTime"
-                type="time"
-                value={formData.startTime}
-                onChange={handleChange}
-                required
-                className="bg-[#2a2a2a] border-[#3a3a3a] text-[#fffbea] focus:border-[#ff7145] focus:ring-[#ff7145]/20"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="endTime" className="text-[#fffbea] font-medium">
-                Heure de fin
-              </Label>
-              <Input
-                id="endTime"
-                name="endTime"
-                type="time"
-                value={formData.endTime}
-                onChange={handleChange}
-                required
-                className="bg-[#2a2a2a] border-[#3a3a3a] text-[#fffbea] focus:border-[#ff7145] focus:ring-[#ff7145]/20"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Location and Price Section */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-[#ff7145] to-[#ff8d69] rounded-full flex items-center justify-center">
-              <MapPin className="h-4 w-4 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-[#fffbea]">Lieu et tarif</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="location" className="text-[#fffbea] font-medium">
-                Lieu de la séance
-              </Label>
-              <Input
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                placeholder="Ex: Paris, Studio photo..."
-                required
-                className="bg-[#2a2a2a] border-[#3a3a3a] text-[#fffbea] focus:border-[#ff7145] focus:ring-[#ff7145]/20 placeholder:text-gray-500"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="price" className="text-[#fffbea] font-medium">
-                Prix (€)
-              </Label>
-              <div className="relative">
-                <Euro className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#ff7145]" />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="date"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-white">Date</FormLabel>
+              <FormControl>
                 <Input
-                  id="price"
-                  name="price"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={handleChange}
-                  placeholder="50.00"
-                  required
-                  className="pl-10 bg-[#2a2a2a] border-[#3a3a3a] text-[#fffbea] focus:border-[#ff7145] focus:ring-[#ff7145]/20 placeholder:text-gray-500"
+                  type="date"
+                  min={minDate}
+                  value={field.value ? formatDateForInput(field.value) : ""}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      field.onChange(parseDateFromInput(e.target.value))
+                    }
+                  }}
+                  className="w-full bg-[#2a2a2a] border-[#3a3a3a] text-white [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-70 [&::-webkit-calendar-picker-indicator]:hover:opacity-100"
+                />
+              </FormControl>
+              <FormDescription className="text-gray-400">Sélectionnez la date de la séance photo</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-medium text-white">Créneaux horaires</h3>
+            <Button
+              type="button"
+              onClick={addTimeSlot}
+              variant="outline"
+              size="sm"
+              className="border-[#ff7145] text-[#ff7145] hover:bg-[#ff7145] hover:text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Ajouter un créneau
+            </Button>
+          </div>
+
+          {timeSlots.map((_, index) => (
+            <div key={index} className="border border-[#3a3a3a] rounded-lg p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="text-md font-medium text-white">Créneau {index + 1}</h4>
+                {timeSlots.length > 1 && (
+                  <Button
+                    type="button"
+                    onClick={() => removeTimeSlot(index)}
+                    variant="outline"
+                    size="sm"
+                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name={`timeSlots.${index}.startTime`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Heure de début</FormLabel>
+                      <div className="relative">
+                        <Clock className="absolute left-3 top-3 h-4 w-4 text-gray-400 pointer-events-none z-10" />
+                        <select
+                          {...field}
+                          className="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ff7145] bg-[#2a2a2a] border-[#3a3a3a] text-white appearance-none cursor-pointer"
+                        >
+                          {timeOptions.map((time) => (
+                            <option key={`start-${index}-${time}`} value={time} className="bg-[#2a2a2a] text-white">
+                              {time}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`timeSlots.${index}.endTime`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Heure de fin</FormLabel>
+                      <div className="relative">
+                        <Clock className="absolute left-3 top-3 h-4 w-4 text-gray-400 pointer-events-none z-10" />
+                        <select
+                          {...field}
+                          className="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ff7145] bg-[#2a2a2a] border-[#3a3a3a] text-white appearance-none cursor-pointer"
+                        >
+                          {timeOptions
+                            .filter((time) => time > form.watch(`timeSlots.${index}.startTime`))
+                            .map((time) => (
+                              <option key={`end-${index}-${time}`} value={time} className="bg-[#2a2a2a] text-white">
+                                {time}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Description Section */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-[#ff7145] to-[#ff8d69] rounded-full flex items-center justify-center">
-              <Clock className="h-4 w-4 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-[#fffbea]">Description (optionnel)</h3>
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name={`timeSlots.${index}.price`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Prix (€)</FormLabel>
+                      <div className="relative">
+                        <Euro className="absolute left-3 top-3 h-4 w-4 text-gray-400 pointer-events-none z-10" />
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="50"
+                            className="pl-10 bg-[#2a2a2a] border-[#3a3a3a] text-white placeholder:text-gray-400"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-[#fffbea] font-medium">
-              Détails de la séance
-            </Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Décrivez le type de séance, le matériel disponible, les conditions particulières..."
-              rows={4}
-              className="bg-[#2a2a2a] border-[#3a3a3a] text-[#fffbea] focus:border-[#ff7145] focus:ring-[#ff7145]/20 placeholder:text-gray-500 resize-none"
-            />
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="pt-4 border-t border-[#2a2a2a]">
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-[#ff7145] to-[#ff8d69] hover:from-[#ff8d69] hover:to-[#ff7145] text-white font-semibold py-3 rounded-xl shadow-lg shadow-[#ff7145]/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <div className="flex items-center gap-2">
-                <Loader2 className="h-5 w-5 animate-spin" />
-                <span>Création en cours...</span>
+                <FormField
+                  control={form.control}
+                  name={`timeSlots.${index}.location`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Lieu</FormLabel>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400 pointer-events-none z-10" />
+                        <FormControl>
+                          <Input
+                            placeholder="Paris, France"
+                            className="pl-10 bg-[#2a2a2a] border-[#3a3a3a] text-white placeholder:text-gray-400"
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Plus className="h-5 w-5" />
-                <span>Créer le créneau</span>
-              </div>
-            )}
-          </Button>
+
+              <FormField
+                control={form.control}
+                name={`timeSlots.${index}.description`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Description (optionnel)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Informations supplémentaires sur la séance..."
+                        className="resize-none bg-[#2a2a2a] border-[#3a3a3a] text-white placeholder:text-gray-400"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          ))}
         </div>
+
+        <Button
+          type="submit"
+          className="w-full bg-gradient-to-r from-[#ff7145] to-[#ff8d69] hover:from-[#ff8d69] hover:to-[#ff7145] text-white font-medium"
+          disabled={isSubmitting}
+        >
+          {isSubmitting
+            ? "Création en cours..."
+            : `Créer ${timeSlots.length} créneau${timeSlots.length > 1 ? "x" : ""}`}
+        </Button>
       </form>
-    </motion.div>
+    </Form>
   )
 }

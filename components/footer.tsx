@@ -1,86 +1,137 @@
 "use client"
+import Link from "next/link"
 import { useLanguage } from "@/contexts/language-context"
-import { Instagram, Facebook, Twitter } from "lucide-react"
+import { Mail, Phone, MapPin, Instagram, Facebook, Twitter } from "lucide-react"
 
 export default function Footer() {
   const { t } = useLanguage()
 
   return (
     <footer className="bg-[#1a1a1a] border-t border-[#2a2a2a] relative z-[var(--z-index-footer)]">
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-8">
-          {/* Left side - Contact buttons */}
-          <div className="flex items-center gap-4">
-            <a
-              href="mailto:guillaume.laplume99@gmail.com"
-              className="text-[#ff7145] hover:text-[#ff8d69] transition-colors font-medium"
-            >
-              Email Us
-            </a>
-            <a
-              href="javascript:void(0)"
-              onClick={() => window.open("tel:+32495335203", "_self")}
-              className="text-white hover:text-gray-300 transition-colors font-medium cursor-pointer"
-            >
-              Free Call
-            </a>
-          </div>
-
-          {/* Center-left - Brand attribution */}
-          <div className="flex-1 text-center lg:text-left">
-            <span className="text-gray-400 text-sm">
-              Carefully Crafted by our Team <span className="text-[#ff7145] underline font-medium">TRUST & SHOOT</span>
-            </span>
-          </div>
-
-          {/* Center-right - Legal links */}
-          <div className="flex items-center gap-6">
-            <a href="/terms" className="text-gray-400 hover:text-white transition-colors text-sm underline">
-              Terms & Conditions
-            </a>
-            <a href="/privacy" className="text-gray-400 hover:text-white transition-colors text-sm underline">
-              Privacy Policy
-            </a>
-          </div>
-
-          {/* Right side - Social icons and copyright */}
-          <div className="flex items-center gap-6">
-            {/* Social media icons */}
-            <div className="flex items-center gap-3">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-[#ff7145] transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook size={18} />
-              </a>
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* About */}
+          <div>
+            <h3 className="text-xl font-bold mb-4 text-white">Trust & Shoot</h3>
+            <p className="text-gray-400 mb-4">
+              La plateforme qui connecte photographes et cosplayers pour des séances photo exceptionnelles.
+            </p>
+            <div className="flex space-x-4">
               <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-[#ff7145] transition-colors"
-                aria-label="Instagram"
+                aria-label="Suivez-nous sur Instagram"
               >
-                <Instagram size={18} />
+                <Instagram size={20} aria-hidden="true" />
+              </a>
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-[#ff7145] transition-colors"
+                aria-label="Suivez-nous sur Facebook"
+              >
+                <Facebook size={20} aria-hidden="true" />
               </a>
               <a
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-[#ff7145] transition-colors"
-                aria-label="Twitter"
+                aria-label="Suivez-nous sur Twitter"
               >
-                <Twitter size={18} />
+                <Twitter size={20} aria-hidden="true" />
               </a>
             </div>
-
-            {/* Copyright */}
-            <div className="text-gray-400 text-sm whitespace-nowrap">
-              Namur, BE © {new Date().getFullYear()} Trust & Shoot™
-            </div>
           </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-xl font-bold mb-4 text-white">Liens rapides</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/#hero" className="text-gray-400 hover:text-[#ff7145] transition-colors">
+                  Accueil
+                </Link>
+              </li>
+              <li>
+                <Link href="/conventions" className="text-gray-400 hover:text-[#ff7145] transition-colors">
+                  Conventions
+                </Link>
+              </li>
+              <li>
+                <Link href="/profile" className="text-gray-400 hover:text-[#ff7145] transition-colors">
+                  Mon profil
+                </Link>
+              </li>
+              <li>
+                <Link href="/messages" className="text-gray-400 hover:text-[#ff7145] transition-colors">
+                  Messages
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h3 className="text-xl font-bold mb-4 text-white">Services</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/" className="text-gray-400 hover:text-[#ff7145] transition-colors">
+                  Trouver un photographe
+                </Link>
+              </li>
+              <li>
+                <Link href="/" className="text-gray-400 hover:text-[#ff7145] transition-colors">
+                  Trouver un cosplayer
+                </Link>
+              </li>
+              <li>
+                <Link href="/conventions" className="text-gray-400 hover:text-[#ff7145] transition-colors">
+                  Réserver un créneau
+                </Link>
+              </li>
+              <li>
+                <Link href="/" className="text-gray-400 hover:text-[#ff7145] transition-colors">
+                  Laisser un avis
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="text-xl font-bold mb-4 text-white">Contact</h3>
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <MapPin size={18} className="text-[#ff7145] mr-2 mt-1 flex-shrink-0" aria-hidden="true" />
+                <span className="text-gray-400">Place de l'Ecole des Cadets 4, 5000 Namur</span>
+              </li>
+              <li className="flex items-center">
+                <Phone size={18} className="text-[#ff7145] mr-2 flex-shrink-0" aria-hidden="true" />
+                <a href="tel:+32495335203" className="text-gray-400 hover:text-[#ff7145] transition-colors">
+                  +32 495 33 52 03
+                </a>
+              </li>
+              <li className="flex items-center">
+                <Mail size={18} className="text-[#ff7145] mr-2 flex-shrink-0" aria-hidden="true" />
+                <a
+                  href="mailto:contact@trustandshoot.com"
+                  className="text-gray-400 hover:text-[#ff7145] transition-colors"
+                >
+                  contact@trustandshoot.com
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-[#2a2a2a] mt-8 pt-8 text-center">
+          <p className="text-gray-500 text-sm">
+            &copy; {new Date().getFullYear()} Trust & Shoot. Tous droits réservés.
+          </p>
         </div>
       </div>
     </footer>
