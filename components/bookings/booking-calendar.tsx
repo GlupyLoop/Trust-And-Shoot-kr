@@ -257,7 +257,7 @@ export function BookingCalendar({ photographerId, isPhotographer = false, onBook
           </div>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="flex flex-col xl:flex-row gap-8">
+          <div className="flex flex-col xl:flex-row gap-8 pt-4">
             <div className="xl:w-1/2">
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
                 <Calendar
