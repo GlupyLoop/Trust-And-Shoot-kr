@@ -269,10 +269,7 @@ export const registerUser = async (
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     const user = userCredential.user
 
-    // Envoyer un email de vérification
-    await sendVerificationEmail(user)
-
-    // Create user profile in Firestore
+    // Create user profile in Firestore first
     const userData: UserData = {
       uid: user.uid,
       email: user.email,
@@ -284,6 +281,16 @@ export const registerUser = async (
     }
 
     await setDoc(doc(db, "users", user.uid), userData)
+
+    // Envoyer un email de vérification après avoir créé le profil
+    try {
+      await sendVerificationEmail(user)
+      console.log("Verification email sent successfully")
+    } catch (emailError) {
+      console.error("Error sending verification email:", emailError)
+      // Ne pas faire échouer l'inscription si l'email de vérification échoue
+      // L'utilisateur pourra le renvoyer plus tard
+    }
 
     return userData
   } catch (error) {
