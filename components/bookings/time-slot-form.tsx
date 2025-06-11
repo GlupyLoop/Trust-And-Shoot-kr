@@ -233,9 +233,8 @@ export function TimeSlotForm({ photographerId, onSuccess, defaultValues }: TimeS
             <Button
               type="button"
               onClick={addTimeSlot}
-              variant="outline"
               size="sm"
-              className="border-[#ff7145] text-[#ff7145] hover:bg-[#ff7145] hover:text-white"
+              className="bg-gradient-to-r from-[#ff7145] to-[#ff8d69] hover:from-[#ff8d69] hover:to-[#ff7145] text-white font-medium border-0"
             >
               <Plus className="h-4 w-4 mr-2" />
               Ajouter un créneau
