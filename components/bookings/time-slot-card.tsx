@@ -1,150 +1,203 @@
 "use client"
 
 import { useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import type { TimeSlot } from "@/types/booking"
+import { deleteTimeSlot } from "@/lib/bookings"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
-import { Clock, MapPin, Euro, Trash2, Calendar, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { deleteTimeSlot } from "@/lib/bookings"
-import { toast } from "sonner"
+import { MapPin, Clock, Calendar, Trash2, CheckCircle, AlertCircle, Clock4 } from "lucide-react"
 import { motion } from "framer-motion"
-import type { TimeSlot } from "@/types/booking"
 
 interface TimeSlotCardProps {
   timeSlot: TimeSlot
   isPhotographer?: boolean
   onDelete?: () => void
   onBook?: () => void
+  isPast?: boolean
 }
 
-export function TimeSlotCard({ timeSlot, isPhotographer = false, onDelete, onBook }: TimeSlotCardProps) {
+export function TimeSlotCard({
+  timeSlot,
+  isPhotographer = false,
+  onDelete,
+  onBook,
+  isPast = false,
+}: TimeSlotCardProps) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer ce créneau horaire ?")) {
-      try {
-        setIsDeleting(true)
-        await deleteTimeSlot(timeSlot.id)
-        toast.success("Créneau horaire supprimé avec succès")
-        if (onDelete) {
-          onDelete()
-        }
-      } catch (error) {
-        console.error("Error deleting time slot:", error)
-        toast.error("Erreur lors de la suppression du créneau horaire")
-      } finally {
-        setIsDeleting(false)
+    try {
+      setIsDeleting(true)
+      await deleteTimeSlot(timeSlot.id)
+      setIsDeleteDialogOpen(false)
+      if (onDelete) {
+        onDelete()
       }
+    } catch (error) {
+      console.error("Error deleting time slot:", error)
+    } finally {
+      setIsDeleting(false)
     }
   }
 
-  const handleBook = () => {
-    if (onBook) {
-      onBook()
-    }
-  }
-
-  const getStatusBadge = () => {
+  const getStatusColor = () => {
     switch (timeSlot.status) {
       case "available":
-        return <Badge className="bg-green-500/20 text-green-400 border border-green-500/40">Disponible</Badge>
+        return "bg-gradient-to-r from-green-500/20 to-green-600/20 border-green-500/40"
       case "pending":
-        return <Badge className="bg-yellow-500/20 text-yellow-400 border border-yellow-500/40">En attente</Badge>
+        return "bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-yellow-500/40"
       case "booked":
-        return <Badge className="bg-blue-500/20 text-blue-400 border border-blue-500/40">Réservé</Badge>
+        return isPast
+          ? "bg-gradient-to-r from-blue-500/10 to-blue-600/10 border-blue-500/30"
+          : "bg-gradient-to-r from-blue-500/20 to-blue-600/20 border-blue-500/40"
       case "cancelled":
-        return <Badge className="bg-red-500/20 text-red-400 border border-red-500/40">Annulé</Badge>
+        return "bg-gradient-to-r from-red-500/20 to-red-600/20 border-red-500/40"
       default:
-        return null
+        return "bg-gradient-to-r from-gray-500/20 to-gray-600/20 border-gray-500/40"
     }
   }
 
-  const slotDate = new Date(timeSlot.date)
+  const getStatusIcon = () => {
+    switch (timeSlot.status) {
+      case "available":
+        return <CheckCircle className="h-4 w-4 text-green-500" />
+      case "pending":
+        return <Clock4 className="h-4 w-4 text-yellow-500" />
+      case "booked":
+        return <CheckCircle className="h-4 w-4 text-blue-500" />
+      case "cancelled":
+        return <AlertCircle className="h-4 w-4 text-red-500" />
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />
+    }
+  }
+
+  const getStatusText = () => {
+    switch (timeSlot.status) {
+      case "available":
+        return "Disponible"
+      case "pending":
+        return "En attente"
+      case "booked":
+        return isPast ? "Réservation passée" : "Réservé"
+      case "cancelled":
+        return "Annulé"
+      default:
+        return "Inconnu"
+    }
+  }
 
   return (
-    <motion.div whileHover={{ scale: 1.01 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
-      <Card className="border border-[#ff7145]/20 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-        <CardContent className="p-0">
-          <div className="p-4">
-            <div className="flex justify-between items-start mb-3">
+    <>
+      <Card
+        className={`border ${getStatusColor()} ${
+          isPast ? "opacity-70" : ""
+        } transition-all hover:shadow-md hover:shadow-black/20`}
+      >
+        <CardContent className="p-4">
+          <div className="flex justify-between items-start">
+            <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-[#ff7145]" />
-                <span className="font-medium text-white">{format(slotDate, "d MMMM yyyy", { locale: fr })}</span>
-              </div>
-              {getStatusBadge()}
-            </div>
-
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-[#ff7145]" />
-                <span className="text-white">
-                  {timeSlot.startTime} - {timeSlot.endTime}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[#ff7145]" />
-                <span className="text-white">{timeSlot.location}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Euro className="h-4 w-4 text-[#ff7145]" />
-                <span className="text-white">{timeSlot.price} €</span>
-              </div>
-
-              {timeSlot.bookedBy && (
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-[#ff7145]" />
-                  <span className="text-white">Réservé par: {timeSlot.bookedByName || timeSlot.bookedBy}</span>
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 text-[#ff7145]" />
+                  <span className="text-sm text-[#fffbea]">
+                    {format(new Date(timeSlot.date), "d MMMM yyyy", { locale: fr })}
+                  </span>
                 </div>
-              )}
+                <span className="text-[#666]">•</span>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-4 w-4 text-[#ff7145]" />
+                  <span className="text-sm text-[#fffbea]">
+                    {timeSlot.startTime} - {timeSlot.endTime}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-[#ff7145]" />
+                <span className="text-sm text-[#fffbea]">{timeSlot.location}</span>
+              </div>
+
+              {timeSlot.description && <p className="text-sm text-gray-400 mt-1">{timeSlot.description}</p>}
+
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-1.5 bg-[#2a2a2a] px-2 py-1 rounded-full">
+                  {getStatusIcon()}
+                  <span className="text-xs text-[#fffbea]">{getStatusText()}</span>
+                </div>
+                <div className="flex items-center gap-1.5 bg-[#2a2a2a] px-2 py-1 rounded-full">
+                  <span className="text-xs text-[#fffbea]">{timeSlot.price}€</span>
+                </div>
+                {timeSlot.status === "booked" && timeSlot.bookedBy && (
+                  <div className="flex items-center gap-1.5 bg-blue-500/20 px-2 py-1 rounded-full border border-blue-500/30">
+                    <span className="text-xs text-blue-200">Réservé</span>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {timeSlot.description && (
-              <div className="mb-4 p-3 bg-[#2a2a2a]/50 rounded-md text-sm">
-                <p className="text-gray-300">{timeSlot.description}</p>
-              </div>
-            )}
+            <div className="flex flex-col gap-2">
+              {isPhotographer && timeSlot.status === "available" && (
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="h-8 w-8 bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </motion.div>
+              )}
 
-            <div className="flex justify-between items-center">
-              {isPhotographer && timeSlot.status === "available" ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={handleDelete}
-                        disabled={isDeleting}
-                        className="bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30"
-                      >
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        {isDeleting ? "Suppression..." : "Supprimer"}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Supprimer ce créneau horaire</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : !isPhotographer && timeSlot.status === "available" ? (
-                <Button
-                  onClick={handleBook}
-                  className="bg-gradient-to-r from-[#ff7145] to-[#ff8d69] hover:from-[#ff8d69] hover:to-[#ff7145] text-white"
-                  size="sm"
-                >
-                  Réserver ce créneau
-                </Button>
-              ) : (
-                <div></div>
+              {!isPhotographer && timeSlot.status === "available" && onBook && (
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="bg-[#ff7145] hover:bg-[#ff8d69] text-white"
+                    onClick={onBook}
+                  >
+                    Réserver
+                  </Button>
+                </motion.div>
               )}
             </div>
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="bg-[#1a1a1a] border border-[#2a2a2a] text-[#fffbea]">
+          <DialogHeader>
+            <DialogTitle>Supprimer ce créneau</DialogTitle>
+          </DialogHeader>
+          <p className="text-[#a0a0a0]">
+            Êtes-vous sûr de vouloir supprimer ce créneau ? Cette action est irréversible.
+          </p>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+              className="border-[#3a3a3a] text-[#fffbea] hover:bg-[#2a2a2a]"
+            >
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-500/80 hover:bg-red-500 text-white"
+            >
+              {isDeleting ? "Suppression..." : "Supprimer"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }

@@ -52,9 +52,7 @@ export async function getPhotographerTimeSlots(photographerId: string): Promise<
 
     // Filter and sort in JavaScript
     const now = new Date()
-    return timeSlots
-      .filter((slot) => new Date(slot.date) >= now)
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    return timeSlots.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
   } catch (error) {
     console.error("Error getting photographer time slots:", error)
     throw error
@@ -424,14 +422,9 @@ export function subscribeToTimeSlots(photographerId: string, callback: (slots: T
         }
       })
 
-      // Filter future slots only and sort
-      const now = new Date()
-      const filteredSlots = timeSlots
-        .filter((slot) => new Date(slot.date) >= now)
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
-      console.log("Filtered slots (future only):", filteredSlots.length)
-      callback(filteredSlots)
+      // Ne pas filtrer les créneaux passés pour les réservations confirmées
+      console.log("Processed time slots:", timeSlots.length)
+      callback(timeSlots)
     },
     (error) => {
       console.error("Error in real-time subscription:", error)

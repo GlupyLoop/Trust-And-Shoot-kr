@@ -427,14 +427,20 @@ export default function PhotographerBookingsPage() {
                   </h2>
 
                   {getAcceptedRequests().length === 0 ? (
-                    <div className="bg-[#1a1a1a] rounded-lg p-8 text-center border border-[#2a2a2a]">
-                      <CheckCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-400 mb-2">Aucune réservation confirmée</h3>
-                      <p className="text-gray-500">Les réservations acceptées apparaîtront ici</p>
+                    <div className="bg-gradient-to-br from-[#1a1a1a] to-[#222] rounded-xl p-8 text-center border border-[#2a2a2a] hover:border-[#ff7145]/30 transition-all duration-300">
+                      <div className="w-20 h-20 bg-gradient-to-r from-[#ff7145]/20 to-[#ff8d69]/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-[#ff7145]/30">
+                        <CheckCircle className="w-10 h-10 text-[#ff7145]" />
+                      </div>
+                      <h3 className="text-xl font-bold bg-gradient-to-r from-[#ff7145] to-[#ff8d69] bg-clip-text text-transparent mb-3">
+                        Aucune réservation confirmée
+                      </h3>
+                      <p className="text-gray-400 leading-relaxed">
+                        Les réservations acceptées apparaîtront ici avec un design élégant
+                      </p>
                     </div>
                   ) : (
                     <motion.div
-                      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4 bg-gradient-to-br from-[#1a1a1a]/50 to-[#222]/50 rounded-xl border border-[#2a2a2a]/50"
                       variants={containerVariants}
                       initial="hidden"
                       animate="visible"
