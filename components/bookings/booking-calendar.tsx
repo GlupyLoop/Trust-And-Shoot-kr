@@ -198,34 +198,39 @@ export function BookingCalendar({ photographerId, isPhotographer = false, onBook
   }
 
   return (
-    <div className="space-y-8">
-      <Card className="border border-[#2a2a2a] bg-gradient-to-br from-[#1a1a1a] to-[#1e1e1e] shadow-2xl">
-        <CardHeader className="pb-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-[#ff7145] to-[#ff8d69] rounded-full flex items-center justify-center">
-                <CalendarIcon size={20} className="text-white" />
+    <motion.div
+      className="space-y-8"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="border border-[#2a2a2a]/50 bg-gradient-to-br from-[#1a1a1a] via-[#1e1e1e] to-[#1a1a1a] shadow-2xl backdrop-blur-sm rounded-3xl overflow-hidden">
+        <CardHeader className="pb-6 bg-gradient-to-r from-[#1e1e1e] to-[#1a1a1a] border-b border-[#2a2a2a]/50">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#ff7145] to-[#ff8d69] rounded-2xl flex items-center justify-center shadow-lg shadow-[#ff7145]/25">
+                <CalendarIcon size={24} className="text-white" />
               </div>
               <div>
-                <CardTitle className="text-xl text-[#fffbea]">Calendrier de disponibilité</CardTitle>
-                <p className="text-sm text-gray-400 mt-1">
+                <CardTitle className="text-2xl text-[#fffbea] font-bold">Calendrier de disponibilité</CardTitle>
+                <p className="text-gray-400 mt-1 text-sm">
                   Sélectionnez une date pour voir les créneaux disponibles
-                  {timeSlots.length > 0 && ` (${timeSlots.length} créneaux)`}
+                  {timeSlots.length > 0 && ` • ${timeSlots.length} créneaux disponibles`}
                   {bookedSlots.length > 0 && ` • ${bookedSlots.length} réservations`}
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <Button
                 variant="outline"
                 size="icon"
                 onClick={handlePrevMonth}
-                className="h-10 w-10 border-[#ff7145] bg-transparent text-[#ff7145] hover:border-[#ff8d69] hover:bg-[#ff7145]/20 hover:text-[#ff8d69]"
+                className="h-11 w-11 border-[#ff7145]/50 bg-[#ff7145]/10 text-[#ff7145] hover:border-[#ff8d69] hover:bg-[#ff7145]/20 hover:text-[#ff8d69] transition-all"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-5 w-5" />
               </Button>
-              <div className="min-w-[140px] text-center">
-                <span className="text-lg font-semibold capitalize text-[#fffbea]">
+              <div className="min-w-[160px] text-center">
+                <span className="text-xl font-bold capitalize text-[#fffbea]">
                   {format(date, "MMMM yyyy", { locale: fr })}
                 </span>
               </div>
@@ -233,99 +238,114 @@ export function BookingCalendar({ photographerId, isPhotographer = false, onBook
                 variant="outline"
                 size="icon"
                 onClick={handleNextMonth}
-                className="h-10 w-10 border-[#ff7145] bg-transparent text-[#ff7145] hover:border-[#ff8d69] hover:bg-[#ff7145]/20 hover:text-[#ff8d69]"
+                className="h-11 w-11 border-[#ff7145]/50 bg-[#ff7145]/10 text-[#ff7145] hover:border-[#ff8d69] hover:bg-[#ff7145]/20 hover:text-[#ff8d69] transition-all"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-5 w-5" />
               </Button>
               {bookedSlots.length > 0 && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={goToNextBooking}
-                  className="ml-2 border-blue-500 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20"
+                  className="ml-2 border-blue-500/50 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:border-blue-400 transition-all"
                 >
-                  <BookOpen className="h-4 w-4 mr-1" />
+                  <BookOpen className="h-4 w-4 mr-2" />
                   <span>Voir réservations</span>
                 </Button>
               )}
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="flex flex-col xl:flex-row gap-8">
             <div className="xl:w-1/2">
-              <Calendar
-                mode="single"
-                selected={selectedDate || undefined}
-                onSelect={handleDateSelect}
-                month={date}
-                className="rounded-xl border border-[#3a3a3a] bg-[#1a1a1a] p-4 text-[#fffbea]"
-                classNames={{
-                  months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-                  month: "space-y-4",
-                  caption: "flex justify-center pt-1 relative items-center text-[#fffbea]",
-                  caption_label: "text-lg font-medium text-[#fffbea]",
-                  nav: "space-x-1 flex items-center",
-                  nav_button:
-                    "h-7 w-7 bg-transparent p-0 text-[#ff7145] hover:text-[#ff8d69] hover:bg-[#ff7145]/20 rounded-md transition-colors border border-[#ff7145]/50",
-                  nav_button_previous: "absolute left-1",
-                  nav_button_next: "absolute right-1",
-                  table: "w-full border-collapse space-y-1",
-                  head_row: "flex",
-                  head_cell: "text-[#a0a0a0] rounded-md w-9 font-medium text-[0.8rem] text-center",
-                  row: "flex w-full mt-2",
-                  cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#ff7145]/20 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                  day: "h-9 w-9 p-0 font-normal text-[#fffbea] hover:bg-[#3a3a3a] hover:text-[#ff7145] rounded-md transition-colors aria-selected:opacity-100",
-                  day_selected:
-                    "bg-[#ff7145] text-white hover:bg-[#ff7145] hover:text-white focus:bg-[#ff7145] focus:text-white",
-                  day_today: "bg-[#2a2a2a] text-[#ff7145] font-semibold",
-                  day_outside: "text-[#666] opacity-50",
-                  day_disabled: "text-[#666] opacity-50",
-                  day_range_middle: "aria-selected:bg-[#ff7145]/20 aria-selected:text-[#fffbea]",
-                  day_hidden: "invisible",
-                }}
-                modifiers={{
-                  available: daysWithSlots.filter((day) => day.hasAvailableSlot).map((day) => day.date),
-                  booked: daysWithSlots.filter((day) => day.hasBookedSlot).map((day) => day.date),
-                  pending: daysWithSlots.filter((day) => day.hasPendingSlot).map((day) => day.date),
-                }}
-                modifiersClassNames={{
-                  available:
-                    "bg-green-500/30 text-green-200 font-bold hover:bg-green-500/40 border border-green-500/60 rounded-lg",
-                  booked:
-                    "bg-blue-500/40 text-blue-100 font-bold hover:bg-blue-500/50 border-2 border-blue-500 rounded-lg shadow-md shadow-blue-500/20",
-                  pending:
-                    "bg-yellow-500/30 text-yellow-200 font-bold hover:bg-yellow-500/40 border border-yellow-500/60 rounded-lg",
-                }}
-              />
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+                <Calendar
+                  mode="single"
+                  selected={selectedDate || undefined}
+                  onSelect={handleDateSelect}
+                  month={date}
+                  className="rounded-xl border border-[#3a3a3a]/50 bg-gradient-to-br from-[#1a1a1a] to-[#1e1e1e] p-4 text-[#fffbea] shadow-lg"
+                  classNames={{
+                    months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                    month: "space-y-4",
+                    caption: "flex justify-center pt-1 relative items-center text-[#fffbea]",
+                    caption_label: "text-lg font-medium text-[#fffbea]",
+                    nav: "space-x-1 flex items-center",
+                    nav_button:
+                      "h-7 w-7 bg-transparent p-0 text-[#ff7145] hover:text-[#ff8d69] hover:bg-[#ff7145]/20 rounded-md transition-colors border border-[#ff7145]/50",
+                    nav_button_previous: "absolute left-1",
+                    nav_button_next: "absolute right-1",
+                    table: "w-full border-collapse space-y-1",
+                    head_row: "flex",
+                    head_cell: "text-[#a0a0a0] rounded-md w-9 font-medium text-[0.8rem] text-center",
+                    row: "flex w-full mt-2",
+                    cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#ff7145]/20 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                    day: "h-9 w-9 p-0 font-normal text-[#fffbea] hover:bg-[#3a3a3a] hover:text-[#ff7145] rounded-md transition-colors aria-selected:opacity-100",
+                    day_selected:
+                      "bg-[#ff7145] text-white hover:bg-[#ff7145] hover:text-white focus:bg-[#ff7145] focus:text-white",
+                    day_today: "bg-[#2a2a2a] text-[#ff7145] font-semibold",
+                    day_outside: "text-[#666] opacity-50",
+                    day_disabled: "text-[#666] opacity-50",
+                    day_range_middle: "aria-selected:bg-[#ff7145]/20 aria-selected:text-[#fffbea]",
+                    day_hidden: "invisible",
+                  }}
+                  modifiers={{
+                    available: daysWithSlots.filter((day) => day.hasAvailableSlot).map((day) => day.date),
+                    booked: daysWithSlots.filter((day) => day.hasBookedSlot).map((day) => day.date),
+                    pending: daysWithSlots.filter((day) => day.hasPendingSlot).map((day) => day.date),
+                  }}
+                  modifiersClassNames={{
+                    available:
+                      "bg-gradient-to-br from-green-500/30 to-green-600/30 text-green-200 font-bold hover:bg-green-500/40 border border-green-500/60 rounded-lg shadow-sm shadow-green-500/20",
+                    booked:
+                      "bg-gradient-to-br from-blue-500/40 to-blue-600/40 text-blue-100 font-bold hover:bg-blue-500/50 border border-blue-500/60 rounded-lg shadow-sm shadow-blue-500/20",
+                    pending:
+                      "bg-gradient-to-br from-yellow-500/30 to-yellow-600/30 text-yellow-200 font-bold hover:bg-yellow-500/40 border border-yellow-500/60 rounded-lg shadow-sm shadow-yellow-500/20",
+                  }}
+                />
+              </motion.div>
 
               {/* Legend */}
-              <div className="mt-6 p-4 bg-[#2a2a2a]/50 rounded-xl border border-[#3a3a3a]/50">
-                <h4 className="text-sm font-medium mb-3 text-[#fffbea]">Légende</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-green-500 shadow-lg shadow-green-500/50"></div>
-                    <span className="text-xs text-[#a0a0a0]">Disponible</span>
+              <motion.div
+                className="mt-8 p-6 bg-gradient-to-r from-[#2a2a2a]/30 to-[#2e2e2e]/30 rounded-2xl border border-[#3a3a3a]/30 backdrop-blur-sm"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <h4 className="text-lg font-semibold mb-4 text-[#fffbea] flex items-center">
+                  <div className="w-2 h-2 bg-[#ff7145] rounded-full mr-3"></div>
+                  Légende
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-[#1a1a1a]/50 rounded-xl border border-green-500/20">
+                    <div className="h-4 w-4 rounded-full bg-gradient-to-r from-green-500 to-green-400 shadow-lg shadow-green-500/30"></div>
+                    <span className="text-sm text-green-200 font-medium">Disponible</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50"></div>
-                    <span className="text-xs text-[#a0a0a0]">Réservé</span>
+                  <div className="flex items-center gap-3 p-3 bg-[#1a1a1a]/50 rounded-xl border border-blue-500/20">
+                    <div className="h-4 w-4 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 shadow-lg shadow-blue-500/30"></div>
+                    <span className="text-sm text-blue-200 font-medium">Réservé</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-yellow-500 shadow-lg shadow-yellow-500/50"></div>
-                    <span className="text-xs text-[#a0a0a0]">En attente</span>
+                  <div className="flex items-center gap-3 p-3 bg-[#1a1a1a]/50 rounded-xl border border-yellow-500/20">
+                    <div className="h-4 w-4 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-400 shadow-lg shadow-yellow-500/30"></div>
+                    <span className="text-sm text-yellow-200 font-medium">En attente</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             <div className="xl:w-1/2">
               <div className="sticky top-4">
                 <div className="flex flex-col gap-4">
-                  <div className="flex items-center justify-between">
+                  <motion.div
+                    className="flex items-center justify-between bg-gradient-to-r from-[#1e1e1e] to-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a]/50"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                  >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-gradient-to-r from-[#ff7145] to-[#ff8d69] rounded-full flex items-center justify-center">
-                        <Clock size={16} className="text-white" />
+                      <div className="w-10 h-10 bg-gradient-to-r from-[#ff7145] to-[#ff8d69] rounded-xl flex items-center justify-center shadow-md shadow-[#ff7145]/20">
+                        <Clock size={18} className="text-white" />
                       </div>
                       <h3 className="text-xl font-semibold text-[#fffbea]">
                         {selectedDate
@@ -336,23 +356,23 @@ export function BookingCalendar({ photographerId, isPhotographer = false, onBook
 
                     {selectedDate && (
                       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-auto">
-                        <TabsList className="bg-[#2a2a2a]">
+                        <TabsList className="bg-[#2a2a2a] border border-[#3a3a3a]/50">
                           <TabsTrigger
                             value="available"
-                            className="data-[state=active]:bg-[#ff7145] data-[state=active]:text-white"
+                            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#ff7145] data-[state=active]:to-[#ff8d69] data-[state=active]:text-white"
                           >
                             Disponibles
                           </TabsTrigger>
                           <TabsTrigger
                             value="booked"
-                            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white"
                           >
                             Réservés
                           </TabsTrigger>
                         </TabsList>
                       </Tabs>
                     )}
-                  </div>
+                  </motion.div>
 
                   <AnimatePresence mode="wait">
                     {loading ? (
@@ -361,13 +381,13 @@ export function BookingCalendar({ photographerId, isPhotographer = false, onBook
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="flex flex-col items-center justify-center py-12"
+                        className="flex flex-col items-center justify-center py-16 bg-gradient-to-br from-[#1a1a1a]/80 to-[#1e1e1e]/80 rounded-xl border border-[#2a2a2a]/30 backdrop-blur-sm"
                       >
                         <div className="relative">
-                          <div className="w-12 h-12 border-4 border-[#ff7145]/20 rounded-full"></div>
-                          <div className="absolute top-0 left-0 w-12 h-12 border-4 border-transparent border-t-[#ff7145] rounded-full animate-spin"></div>
+                          <div className="w-16 h-16 border-4 border-[#ff7145]/20 rounded-full"></div>
+                          <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-[#ff7145] rounded-full animate-spin"></div>
                         </div>
-                        <p className="mt-4 text-[#a0a0a0] font-medium">Chargement des créneaux...</p>
+                        <p className="mt-6 text-[#a0a0a0] font-medium text-lg">Chargement des créneaux...</p>
                       </motion.div>
                     ) : filteredSlots.length > 0 ? (
                       <motion.div
@@ -402,23 +422,23 @@ export function BookingCalendar({ photographerId, isPhotographer = false, onBook
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
-                        className="text-center py-12 bg-[#2a2a2a]/30 rounded-xl border border-[#3a3a3a]/50"
+                        className="text-center py-16 bg-gradient-to-br from-[#1a1a1a]/80 to-[#1e1e1e]/80 rounded-xl border border-[#2a2a2a]/30 backdrop-blur-sm"
                       >
-                        <div className="w-16 h-16 bg-gradient-to-br from-gray-500/20 to-gray-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Clock size={24} className="text-gray-500" />
+                        <div className="w-20 h-20 bg-gradient-to-br from-gray-500/20 to-gray-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                          <Clock size={32} className="text-gray-500" />
                         </div>
-                        <h4 className="text-lg font-medium mb-2 text-[#fffbea]">
+                        <h4 className="text-xl font-medium mb-3 text-[#fffbea]">
                           {selectedDate
                             ? activeTab === "available"
                               ? "Aucun créneau disponible"
                               : "Aucune réservation pour cette date"
                             : "Sélectionnez une date"}
                         </h4>
-                        <p className="text-[#a0a0a0] text-sm">
+                        <p className="text-[#a0a0a0] text-base max-w-md mx-auto">
                           {selectedDate
                             ? activeTab === "available"
-                              ? "Aucun créneau n'est disponible pour cette date"
-                              : "Aucune réservation n'est enregistrée pour cette date"
+                              ? "Aucun créneau n'est disponible pour cette date. Essayez une autre date."
+                              : "Aucune réservation n'est enregistrée pour cette date."
                             : "Choisissez une date dans le calendrier pour voir les créneaux disponibles"}
                         </p>
                       </motion.div>
@@ -440,13 +460,13 @@ export function BookingCalendar({ photographerId, isPhotographer = false, onBook
           border-radius: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #ff7145;
+          background: linear-gradient(to bottom, #ff7145, #ff8d69);
           border-radius: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #ff8d69;
+          background: linear-gradient(to bottom, #ff8d69, #ff7145);
         }
       `}</style>
-    </div>
+    </motion.div>
   )
 }

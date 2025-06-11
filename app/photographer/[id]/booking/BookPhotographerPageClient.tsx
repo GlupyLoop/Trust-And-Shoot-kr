@@ -8,7 +8,7 @@ import { BookingCalendar } from "@/components/bookings/booking-calendar"
 import { BookingRequestForm } from "@/components/bookings/booking-request-form"
 import type { TimeSlot } from "@/types/booking"
 import { getUserById } from "@/lib/firebase"
-import { ArrowLeft, Calendar } from "lucide-react"
+import { ArrowLeft, Calendar, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import AnimatedSection from "@/components/ui/animated-section"
@@ -68,33 +68,47 @@ export default function BookPhotographerPageClient() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-[#141414] pt-20 pb-12">
-        <div className="container mx-auto px-4 max-w-6xl">
+      <main className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#141414] to-[#1a1a1a] pt-20 pb-12 relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#ff7145]/5 via-transparent to-[#ff7145]/5 pointer-events-none"></div>
+
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <AnimatedSection>
             <motion.button
               onClick={() => router.back()}
-              className="flex items-center gap-2 mb-6 text-[#fffbea] font-bold"
+              className="flex items-center gap-3 mb-8 text-[#fffbea] font-semibold hover:text-[#ff7145] transition-colors group"
               whileHover={{ x: -5 }}
               whileTap={{ scale: 0.95 }}
             >
-              <ArrowLeft size={20} />
+              <div className="w-10 h-10 bg-gradient-to-r from-[#2a2a2a] to-[#2e2e2e] rounded-xl flex items-center justify-center border border-[#3a3a3a]/50 group-hover:border-[#ff7145]/50 transition-all">
+                <ArrowLeft size={20} />
+              </div>
               <span>RETOUR AU PROFIL</span>
             </motion.button>
           </AnimatedSection>
 
           <AnimatedSection>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-              <h1 className="text-3xl font-bold flex items-center">
-                <Calendar className="mr-2 text-[#ff7145]" />
-                Réserver avec {photographerName}
-              </h1>
+            <div className="bg-gradient-to-r from-[#1a1a1a] via-[#1e1e1e] to-[#1a1a1a] rounded-3xl p-8 mb-8 border border-[#2a2a2a]/50 shadow-2xl backdrop-blur-sm">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#ff7145] to-[#ff8d69] rounded-2xl flex items-center justify-center shadow-lg shadow-[#ff7145]/25">
+                    <Calendar className="h-8 w-8 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-bold text-[#fffbea] mb-2">Réserver avec {photographerName}</h1>
+                    <p className="text-gray-400">Sélectionnez un créneau disponible pour votre séance photo</p>
+                  </div>
+                </div>
 
-              <Button
-                onClick={() => router.push(`/photographer/${id}`)}
-                className="mt-4 md:mt-0 bg-[#ff7145] text-white hover:bg-[#e55a35] border border-[#ff7145] hover:border-[#e55a35]"
-              >
-                Voir le profil
-              </Button>
+                <Button
+                  onClick={() => router.push(`/photographer/${id}`)}
+                  variant="outline"
+                  className="border-[#ff7145]/50 bg-[#ff7145]/10 text-[#ff7145] hover:bg-[#ff7145]/20 hover:border-[#ff7145] transition-all"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Voir le profil
+                </Button>
+              </div>
             </div>
           </AnimatedSection>
 
