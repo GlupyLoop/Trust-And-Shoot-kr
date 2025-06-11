@@ -37,11 +37,8 @@ export default function LoginPage() {
         <div className="max-w-lg mx-auto">
           <div className="flex items-center gap-3 mb-8">
             <div className="h-12 w-auto relative">
-              <Image src="/logo.png" alt="Trust & Shoot Logo" width={60} height={48} className="h-full w-auto" />
+              <Image src="/logo_svg.svg" alt="Trust & Shoot Logo" width={60} height={48} className="h-full w-auto" />
             </div>
-            <h1 className="font-bold text-3xl">
-              TRUST <span className="text-[#ff7145]">&</span> SHOOT
-            </h1>
           </div>
 
           <h2 className="text-2xl md:text-3xl font-bold mb-6 text-[#fffbea]">
