@@ -144,13 +144,13 @@ export function TimeSlotCard({
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 pt-2">
               {isPhotographer && timeSlot.status === "available" && (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                    variant="destructive"
+                    variant="outline"
                     size="icon"
-                    className="h-8 w-8 bg-[#2a2a2a] border border-red-500/30 text-red-500 hover:bg-red-500/20"
+                    className="h-8 w-8 bg-[#1a1a1a] border border-red-500/30 text-red-500 hover:bg-red-500/10 hover:border-red-500 transition-all duration-200"
                     onClick={() => setIsDeleteDialogOpen(true)}
                   >
                     <Trash2 className="h-4 w-4" />
