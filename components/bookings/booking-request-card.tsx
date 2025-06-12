@@ -181,7 +181,7 @@ export function BookingRequestCard({
     <>
       <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ duration: 0.2 }} className="group">
         <Card
-          className={`overflow-hidden bg-gradient-to-br ${statusConfig.gradient} border ${statusConfig.cardClass} transition-all duration-300 hover:shadow-xl`}
+          className={`overflow-hidden bg-[#1a1a1a] border ${statusConfig.cardClass} transition-all duration-300 hover:shadow-xl`}
         >
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
@@ -308,12 +308,12 @@ export function BookingRequestCard({
       </motion.div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-[#1a1a1a] to-[#222] border border-[#2a2a2a] shadow-xl">
+        <DialogContent className="sm:max-w-[500px] bg-[#1a1a1a] border border-[#2a2a2a] shadow-xl">
           <DialogHeader className="space-y-3">
             <div className={`w-12 h-12 rounded-full ${statusConfig.bgColor} flex items-center justify-center mx-auto`}>
               {statusConfig.icon}
             </div>
-            <DialogTitle className="text-center text-xl">Détails de la réservation</DialogTitle>
+            <DialogTitle className="text-center text-xl">Détails du shoot</DialogTitle>
             <div className={`text-center ${statusConfig.color} font-medium`}>
               {request.status === "pending" && "En attente de confirmation"}
               {request.status === "accepted" && "Réservation confirmée"}
@@ -346,12 +346,6 @@ export function BookingRequestCard({
                     <span className="font-medium text-white">
                       {timeSlot.startTime} - {timeSlot.endTime}
                     </span>
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 bg-[#1a1a1a]/70 p-2 rounded">
-                  <MapPin className="h-4 w-4 text-[#ff7145]" />
-                  <span>
-                    Lieu: <span className="font-medium text-white">{timeSlot.location}</span>
                   </span>
                 </div>
                 <div className="flex items-center gap-3 bg-[#1a1a1a]/70 p-2 rounded">

@@ -307,7 +307,7 @@ export default function CosplayerDashboard() {
           <Button
             onClick={() => router.push("/")}
             variant="outline"
-            className="border-[#ff7145] text-[#ff7145] hover:bg-[#ff7145]/10 h-auto py-3 flex-col gap-2"
+            className="text-[#ff7145] hover:bg-[#ff7145]/10 h-auto py-3 flex-col gap-2"
           >
             <Users className="w-5 h-5" />
             <span className="text-sm">Find Photographers</span>
@@ -315,7 +315,7 @@ export default function CosplayerDashboard() {
           <Button
             onClick={() => router.push("/profile")}
             variant="outline"
-            className="border-[#ff7145] text-[#ff7145] hover:bg-[#ff7145]/10 h-auto py-3 flex-col gap-2"
+            className="text-[#ff7145] hover:bg-[#ff7145]/10 h-auto py-3 flex-col gap-2"
           >
             <Settings className="w-5 h-5" />
             <span className="text-sm">Edit Profile</span>

@@ -104,14 +104,14 @@ export function TimeSlotCard({
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4 text-[#ff7145]" />
-                  <span className="text-sm text-[#fffbea]">
+                  <span className="text-sm font-medium text-[#fffbea]">
                     {format(new Date(timeSlot.date), "d MMMM yyyy", { locale: fr })}
                   </span>
                 </div>
                 <span className="text-[#666]">•</span>
                 <div className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4 text-[#ff7145]" />
-                  <span className="text-sm text-[#fffbea]">
+                  <span className="text-sm font-medium text-[#fffbea]">
                     {timeSlot.startTime} - {timeSlot.endTime}
                   </span>
                 </div>
@@ -119,22 +119,22 @@ export function TimeSlotCard({
 
               <div className="flex items-center gap-1.5">
                 <MapPin className="h-4 w-4 text-[#ff7145]" />
-                <span className="text-sm text-[#fffbea]">{timeSlot.location}</span>
+                <span className="text-sm font-medium text-[#fffbea]">{timeSlot.location}</span>
               </div>
 
-              {timeSlot.description && <p className="text-sm text-gray-400 mt-1">{timeSlot.description}</p>}
+              {timeSlot.description && <p className="text-sm text-gray-300 mt-1">{timeSlot.description}</p>}
 
               <div className="flex items-center gap-2 mt-2">
                 <div className="flex items-center gap-1.5 bg-[#2a2a2a] px-2 py-1 rounded-full">
                   {getStatusIcon()}
-                  <span className="text-xs text-[#fffbea]">{getStatusText()}</span>
+                  <span className="text-xs font-medium text-[#fffbea]">{getStatusText()}</span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-[#2a2a2a] px-2 py-1 rounded-full">
-                  <span className="text-xs text-[#fffbea]">{timeSlot.price}€</span>
+                  <span className="text-xs font-medium text-[#fffbea]">{timeSlot.price}€</span>
                 </div>
                 {timeSlot.status === "booked" && timeSlot.bookedBy && (
                   <div className="flex items-center gap-1.5 bg-blue-500/20 px-2 py-1 rounded-full border border-blue-500/30">
-                    <span className="text-xs text-blue-200">Réservé</span>
+                    <span className="text-xs font-medium text-blue-200">Réservé</span>
                   </div>
                 )}
               </div>

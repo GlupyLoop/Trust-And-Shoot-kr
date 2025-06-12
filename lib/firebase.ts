@@ -1,5 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
+// Au début du fichier, ajouter l'import de firebase
+import * as firebase from "firebase/app"
 import { getAnalytics } from "firebase/analytics"
 import {
   getAuth,
@@ -1620,4 +1622,5 @@ export async function getUsersByRole(role: "photographer" | "cosplayer") {
   }
 }
 
-export { app, auth, db, storage, analytics }
+// À la fin du fichier, dans la ligne d'export, ajouter firebase
+export { app, auth, db, storage, analytics, firebase }

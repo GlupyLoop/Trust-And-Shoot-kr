@@ -752,7 +752,7 @@ export default function CosplayerBookingsPage() {
                     <p className="text-white font-medium">{photographerNames[selectedBooking.photographerId]}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-400">Statut</label>
+                    <label className="text-sm text-gray-400 block mb-2">Statut</label>
                     <Badge
                       className={`${
                         selectedBooking.status === "pending"
@@ -816,20 +816,13 @@ export default function CosplayerBookingsPage() {
                 </div>
               </div>
 
-              <div className="flex gap-2 mt-6">
-                <Button
-                  onClick={() => setSelectedBooking(null)}
-                  variant="outline"
-                  className="flex-1 border-[#3a3a3a] bg-[#2a2a2a] text-white hover:bg-[#3a3a3a] hover:border-[#ff7145]"
-                >
-                  Fermer
-                </Button>
+              <div className="flex justify-center mt-6">
                 <Button
                   onClick={() => router.push(`/messages?user=${selectedBooking.photographerId}`)}
-                  className="flex-1 bg-gradient-to-r from-[#ff7145] to-[#ff8d69]"
+                  className="w-full bg-gradient-to-r from-[#ff7145] to-[#ff8d69]"
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
-                  Contacter
+                  Contacter le photographe
                 </Button>
               </div>
             </div>

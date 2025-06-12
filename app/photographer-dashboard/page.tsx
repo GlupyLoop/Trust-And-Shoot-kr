@@ -31,6 +31,7 @@ import ImageDetailsModal from "@/components/ui/image-details-modal"
 import { addPortfolioItem, deletePortfolioItem, updatePortfolioItemDetails } from "@/lib/firebase"
 import { getPhotographerBookingRequests, getPhotographerTimeSlots } from "@/lib/bookings"
 import { Button } from "@/components/ui/button"
+import { firebase } from "@/lib/firebase"
 
 export default function PhotographerDashboardPage() {
   const { user, userData, loading, shouldPromptUsernameUpdate, refreshUserData } = useAuth()
@@ -78,15 +79,37 @@ export default function PhotographerDashboardPage() {
             getPhotographerTimeSlots(user.uid),
           ])
 
-          const confirmedBookings = bookingRequests
-            .filter((request) => request.status === "accepted")
-            .map((request) => {
-              const timeSlot = timeSlots.find((slot) => slot.id === request.timeSlotId)
-              return {
-                ...request,
-                timeSlot,
-              }
-            })
+          // Créer un tableau pour stocker les réservations avec les noms des cosplayers
+          const bookingsWithCosplayerNames = await Promise.all(
+            bookingRequests
+              .filter((request) => request.status === "accepted")
+              .map(async (request) => {
+                const timeSlot = timeSlots.find((slot) => slot.id === request.timeSlotId)
+
+                // Récupérer les informations du cosplayer depuis Firebase
+                let cosplayerName = "Cosplayer"
+                try {
+                  // Utiliser l'ID du cosplayer pour obtenir son profil
+                  if (request.cosplayerId) {
+                    const cosplayerDoc = await firebase.firestore().collection("users").doc(request.cosplayerId).get()
+                    if (cosplayerDoc.exists) {
+                      const cosplayerData = cosplayerDoc.data()
+                      cosplayerName = cosplayerData.displayName || cosplayerData.username || "Cosplayer"
+                    }
+                  }
+                } catch (err) {
+                  console.error("Error fetching cosplayer data:", err)
+                }
+
+                return {
+                  ...request,
+                  timeSlot,
+                  cosplayerName,
+                }
+              }),
+          )
+
+          const confirmedBookings = bookingsWithCosplayerNames
             .filter((booking) => booking.timeSlot)
             .sort((a, b) => new Date(a.timeSlot.date).getTime() - new Date(b.timeSlot.date).getTime())
             .slice(0, 3)
@@ -256,7 +279,7 @@ export default function PhotographerDashboardPage() {
           <Button
             onClick={() => router.push("/")}
             variant="outline"
-            className="border-[#ff7145] text-[#ff7145] hover:bg-[#ff7145]/10 h-auto py-3 flex-col gap-2"
+            className="text-[#ff7145] hover:bg-[#ff7145]/10 h-auto py-3 flex-col gap-2"
           >
             <Users className="w-5 h-5" />
             <span className="text-sm">Find Cosplayers</span>
@@ -264,7 +287,7 @@ export default function PhotographerDashboardPage() {
           <Button
             onClick={() => router.push("/profile")}
             variant="outline"
-            className="border-[#ff7145] text-[#ff7145] hover:bg-[#ff7145]/10 h-auto py-3 flex-col gap-2"
+            className="text-[#ff7145] hover:bg-[#ff7145]/10 h-auto py-3 flex-col gap-2"
           >
             <Settings className="w-5 h-5" />
             <span className="text-sm">Edit Profile</span>
@@ -294,6 +317,7 @@ export default function PhotographerDashboardPage() {
                   <div className="flex justify-between items-center">
                     <div>
                       <h4 className="font-medium text-white">{booking.cosplayCharacter || "Cosplay Shoot"}</h4>
+                      <p className="text-sm text-[#ff7145]">par {booking.cosplayerName || "Cosplayer"}</p>
                       <p className="text-sm text-gray-400">
                         {new Date(booking.timeSlot.date).toLocaleDateString("fr-FR", {
                           weekday: "short",
