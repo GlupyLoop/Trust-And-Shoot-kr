@@ -10,6 +10,7 @@ import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import { MapPin, Clock, Calendar, Trash2, CheckCircle, AlertCircle, Clock4 } from "lucide-react"
 import { motion } from "framer-motion"
+import { Badge } from "@/components/ui/badge"
 
 interface TimeSlotCardProps {
   timeSlot: TimeSlot
@@ -44,59 +45,67 @@ export function TimeSlotCard({
     }
   }
 
-  const getStatusColor = () => {
+  const getStatusConfig = () => {
     switch (timeSlot.status) {
       case "available":
-        return "bg-gradient-to-r from-green-500/20 to-green-600/20 border-green-500/40"
+        return {
+          bgColor: "bg-[#1a1a1a]",
+          borderColor: "border-[#2a2a2a] hover:border-[#ff7145]/30",
+          badgeColor: "bg-[#2a2a2a] text-[#ff7145]",
+          icon: <CheckCircle className="h-4 w-4 text-[#ff7145]" />,
+          text: "Disponible",
+        }
       case "pending":
-        return "bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-yellow-500/40"
+        return {
+          bgColor: "bg-[#1a1a1a]",
+          borderColor: "border-[#2a2a2a] hover:border-yellow-500/30",
+          badgeColor: "bg-[#2a2a2a] text-yellow-500",
+          icon: <Clock4 className="h-4 w-4 text-yellow-500" />,
+          text: "En attente",
+        }
       case "booked":
         return isPast
-          ? "bg-gradient-to-r from-blue-500/10 to-blue-600/10 border-blue-500/30"
-          : "bg-gradient-to-r from-blue-500/20 to-blue-600/20 border-blue-500/40"
+          ? {
+              bgColor: "bg-[#1a1a1a]",
+              borderColor: "border-[#2a2a2a] hover:border-blue-500/30",
+              badgeColor: "bg-[#2a2a2a] text-blue-500",
+              icon: <CheckCircle className="h-4 w-4 text-blue-500" />,
+              text: "Réservation passée",
+            }
+          : {
+              bgColor: "bg-[#1a1a1a]",
+              borderColor: "border-[#2a2a2a] hover:border-blue-500/30",
+              badgeColor: "bg-[#2a2a2a] text-blue-500",
+              icon: <CheckCircle className="h-4 w-4 text-blue-500" />,
+              text: "Réservé",
+            }
       case "cancelled":
-        return "bg-gradient-to-r from-red-500/20 to-red-600/20 border-red-500/40"
+        return {
+          bgColor: "bg-[#1a1a1a]",
+          borderColor: "border-[#2a2a2a] hover:border-red-500/30",
+          badgeColor: "bg-[#2a2a2a] text-red-500",
+          icon: <AlertCircle className="h-4 w-4 text-red-500" />,
+          text: "Annulé",
+        }
       default:
-        return "bg-gradient-to-r from-gray-500/20 to-gray-600/20 border-gray-500/40"
+        return {
+          bgColor: "bg-[#1a1a1a]",
+          borderColor: "border-[#2a2a2a] hover:border-[#3a3a3a]",
+          badgeColor: "bg-[#2a2a2a] text-gray-400",
+          icon: <Clock className="h-4 w-4 text-gray-400" />,
+          text: "Inconnu",
+        }
     }
   }
 
-  const getStatusIcon = () => {
-    switch (timeSlot.status) {
-      case "available":
-        return <CheckCircle className="h-4 w-4 text-green-500" />
-      case "pending":
-        return <Clock4 className="h-4 w-4 text-yellow-500" />
-      case "booked":
-        return <CheckCircle className="h-4 w-4 text-blue-500" />
-      case "cancelled":
-        return <AlertCircle className="h-4 w-4 text-red-500" />
-      default:
-        return <Clock className="h-4 w-4 text-gray-500" />
-    }
-  }
-
-  const getStatusText = () => {
-    switch (timeSlot.status) {
-      case "available":
-        return "Disponible"
-      case "pending":
-        return "En attente"
-      case "booked":
-        return isPast ? "Réservation passée" : "Réservé"
-      case "cancelled":
-        return "Annulé"
-      default:
-        return "Inconnu"
-    }
-  }
+  const statusConfig = getStatusConfig()
 
   return (
     <>
       <Card
-        className={`border ${getStatusColor()} ${
+        className={`${statusConfig.bgColor} border ${statusConfig.borderColor} ${
           isPast ? "opacity-70" : ""
-        } transition-all hover:shadow-md hover:shadow-black/20`}
+        } transition-all hover:shadow-md hover:shadow-black/20 rounded-lg`}
       >
         <CardContent className="p-4">
           <div className="flex justify-between items-start">
@@ -125,18 +134,13 @@ export function TimeSlotCard({
               {timeSlot.description && <p className="text-sm text-gray-300 mt-1">{timeSlot.description}</p>}
 
               <div className="flex items-center gap-2 mt-2">
-                <div className="flex items-center gap-1.5 bg-[#2a2a2a] px-2 py-1 rounded-full">
-                  {getStatusIcon()}
-                  <span className="text-xs font-medium text-[#fffbea]">{getStatusText()}</span>
-                </div>
-                <div className="flex items-center gap-1.5 bg-[#2a2a2a] px-2 py-1 rounded-full">
-                  <span className="text-xs font-medium text-[#fffbea]">{timeSlot.price}€</span>
-                </div>
-                {timeSlot.status === "booked" && timeSlot.bookedBy && (
-                  <div className="flex items-center gap-1.5 bg-blue-500/20 px-2 py-1 rounded-full border border-blue-500/30">
-                    <span className="text-xs font-medium text-blue-200">Réservé</span>
-                  </div>
-                )}
+                <Badge variant="outline" className={`px-2 py-1 flex items-center gap-1 ${statusConfig.badgeColor}`}>
+                  {statusConfig.icon}
+                  <span className="text-xs font-medium">{statusConfig.text}</span>
+                </Badge>
+                <Badge variant="outline" className="px-2 py-1 bg-[#2a2a2a] text-[#fffbea]">
+                  <span className="text-xs font-medium">{timeSlot.price}€</span>
+                </Badge>
               </div>
             </div>
 
@@ -146,7 +150,7 @@ export function TimeSlotCard({
                   <Button
                     variant="destructive"
                     size="icon"
-                    className="h-8 w-8 bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30"
+                    className="h-8 w-8 bg-[#2a2a2a] border border-red-500/30 text-red-500 hover:bg-red-500/20"
                     onClick={() => setIsDeleteDialogOpen(true)}
                   >
                     <Trash2 className="h-4 w-4" />

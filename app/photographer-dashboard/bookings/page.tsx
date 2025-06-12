@@ -18,7 +18,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function PhotographerBookingsPage() {
   const router = useRouter()
@@ -32,7 +31,6 @@ export default function PhotographerBookingsPage() {
   const [activeView, setActiveView] = useState<"calendar" | "requests">("calendar")
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [activeTab, setActiveTab] = useState("all")
 
   // Utiliser l'abonnement en temps réel pour les créneaux
   useEffect(() => {
@@ -378,58 +376,6 @@ export default function PhotographerBookingsPage() {
 
             {activeView === "requests" && (
               <div className="space-y-6">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-5 bg-[#1a1a1a] border border-[#2a2a2a]">
-                    <TabsTrigger
-                      value="all"
-                      className="data-[state=active]:bg-[#ff7145] data-[state=active]:text-white"
-                    >
-                      Toutes
-                      <Badge variant="secondary" className="ml-2 bg-[#2a2a2a] text-gray-300">
-                        {getStatusCount("all")}
-                      </Badge>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="pending"
-                      className="data-[state=active]:bg-[#ff7145] data-[state=active]:text-white"
-                    >
-                      En attente
-                      <Badge variant="secondary" className="ml-2 bg-[#2a2a2a] text-gray-300">
-                        {getStatusCount("pending")}
-                      </Badge>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="accepted"
-                      className="data-[state=active]:bg-[#ff7145] data-[state=active]:text-white"
-                    >
-                      Acceptées
-                      <Badge variant="secondary" className="ml-2 bg-[#2a2a2a] text-gray-300">
-                        {getStatusCount("accepted")}
-                      </Badge>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="rejected"
-                      className="data-[state=active]:bg-[#ff7145] data-[state=active]:text-white"
-                    >
-                      Rejetées
-                      <Badge variant="secondary" className="ml-2 bg-[#2a2a2a] text-gray-300">
-                        {getStatusCount("rejected")}
-                      </Badge>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="cancelled"
-                      className="data-[state=active]:bg-[#ff7145] data-[state=active]:text-white"
-                    >
-                      Annulées
-                      <Badge variant="secondary" className="ml-2 bg-[#2a2a2a] text-gray-300">
-                        {getStatusCount("cancelled")}
-                      </Badge>
-                    </TabsTrigger>
-                  </TabsList>
-
-                  {/* Contenu des onglets */}
-                </Tabs>
-
                 {/* Pending Requests */}
                 <div>
                   <h2 className="text-xl font-bold mb-4 flex items-center">

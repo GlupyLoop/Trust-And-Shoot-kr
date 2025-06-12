@@ -31,7 +31,8 @@ import ImageDetailsModal from "@/components/ui/image-details-modal"
 import { addPortfolioItem, deletePortfolioItem, updatePortfolioItemDetails } from "@/lib/firebase"
 import { getPhotographerBookingRequests, getPhotographerTimeSlots } from "@/lib/bookings"
 import { Button } from "@/components/ui/button"
-import { firebase } from "@/lib/firebase"
+import { db } from "@/lib/firebase"
+import { doc, getDoc } from "firebase/firestore"
 
 export default function PhotographerDashboardPage() {
   const { user, userData, loading, shouldPromptUsernameUpdate, refreshUserData } = useAuth()
@@ -91,8 +92,8 @@ export default function PhotographerDashboardPage() {
                 try {
                   // Utiliser l'ID du cosplayer pour obtenir son profil
                   if (request.cosplayerId) {
-                    const cosplayerDoc = await firebase.firestore().collection("users").doc(request.cosplayerId).get()
-                    if (cosplayerDoc.exists) {
+                    const cosplayerDoc = await getDoc(doc(db, "users", request.cosplayerId))
+                    if (cosplayerDoc.exists()) {
                       const cosplayerData = cosplayerDoc.data()
                       cosplayerName = cosplayerData.displayName || cosplayerData.username || "Cosplayer"
                     }

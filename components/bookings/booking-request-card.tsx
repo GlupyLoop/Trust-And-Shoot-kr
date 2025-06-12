@@ -86,67 +86,72 @@ export function BookingRequestCard({
       case "pending":
         return {
           badge: (
-            <Badge className="bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/30">
+            <Badge className="bg-[#2a2a2a] text-yellow-500 border-yellow-500/30 hover:bg-yellow-500/20">
               <AlertCircle size={12} className="mr-1" />
               En attente
             </Badge>
           ),
-          cardClass: "border-yellow-500/20 hover:border-yellow-500/40 hover:shadow-yellow-500/10",
-          gradient: "from-yellow-500/5 to-amber-500/5",
-          icon: <AlertCircle className="h-5 w-5 text-yellow-400" />,
-          color: "text-yellow-400",
-          bgColor: "bg-yellow-500/10",
+          cardClass: "border-[#2a2a2a] hover:border-yellow-500/30 hover:shadow-yellow-500/10",
+          gradient: "from-[#1a1a1a] to-[#222]",
+          icon: <AlertCircle className="h-5 w-5 text-yellow-500" />,
+          color: "text-yellow-500",
+          bgColor: "bg-[#2a2a2a]",
+          iconBgColor: "bg-yellow-500/10",
         }
       case "accepted":
         return {
           badge: (
-            <Badge className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30">
+            <Badge className="bg-[#2a2a2a] text-green-500 border-green-500/30 hover:bg-green-500/20">
               <CheckCircle size={12} className="mr-1" />
               Acceptée
             </Badge>
           ),
-          cardClass: "border-green-500/20 hover:border-green-500/40 hover:shadow-green-500/10",
-          gradient: "from-green-500/5 to-emerald-500/5",
-          icon: <CheckCircle className="h-5 w-5 text-green-400" />,
-          color: "text-green-400",
-          bgColor: "bg-green-500/10",
+          cardClass: "border-[#2a2a2a] hover:border-green-500/30 hover:shadow-green-500/10",
+          gradient: "from-[#1a1a1a] to-[#222]",
+          icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+          color: "text-green-500",
+          bgColor: "bg-[#2a2a2a]",
+          iconBgColor: "bg-green-500/10",
         }
       case "rejected":
         return {
           badge: (
-            <Badge className="bg-gradient-to-r from-red-500/20 to-rose-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30">
+            <Badge className="bg-[#2a2a2a] text-red-500 border-red-500/30 hover:bg-red-500/20">
               <XCircle size={12} className="mr-1" />
               Rejetée
             </Badge>
           ),
-          cardClass: "border-red-500/20 hover:border-red-500/40 hover:shadow-red-500/10",
-          gradient: "from-red-500/5 to-rose-500/5",
-          icon: <XCircle className="h-5 w-5 text-red-400" />,
-          color: "text-red-400",
-          bgColor: "bg-red-500/10",
+          cardClass: "border-[#2a2a2a] hover:border-red-500/30 hover:shadow-red-500/10",
+          gradient: "from-[#1a1a1a] to-[#222]",
+          icon: <XCircle className="h-5 w-5 text-red-500" />,
+          color: "text-red-500",
+          bgColor: "bg-[#2a2a2a]",
+          iconBgColor: "bg-red-500/10",
         }
       case "cancelled":
         return {
           badge: (
-            <Badge className="bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-400 border-gray-500/30 hover:bg-gray-500/30">
+            <Badge className="bg-[#2a2a2a] text-gray-400 border-gray-500/30 hover:bg-gray-500/20">
               <XCircle size={12} className="mr-1" />
               Annulée
             </Badge>
           ),
-          cardClass: "border-gray-500/20 hover:border-gray-500/40 hover:shadow-gray-500/10",
-          gradient: "from-gray-500/5 to-slate-500/5",
+          cardClass: "border-[#2a2a2a] hover:border-gray-500/30 hover:shadow-gray-500/10",
+          gradient: "from-[#1a1a1a] to-[#222]",
           icon: <XCircle className="h-5 w-5 text-gray-400" />,
           color: "text-gray-400",
-          bgColor: "bg-gray-500/10",
+          bgColor: "bg-[#2a2a2a]",
+          iconBgColor: "bg-gray-500/10",
         }
       default:
         return {
           badge: null,
           cardClass: "border-[#2a2a2a] hover:border-[#3a3a3a]",
-          gradient: "from-[#1a1a1a] to-[#1e1e1e]",
+          gradient: "from-[#1a1a1a] to-[#222]",
           icon: <AlertCircle className="h-5 w-5 text-gray-400" />,
           color: "text-gray-400",
-          bgColor: "bg-gray-500/10",
+          bgColor: "bg-[#2a2a2a]",
+          iconBgColor: "bg-gray-500/10",
         }
     }
   }
@@ -181,7 +186,7 @@ export function BookingRequestCard({
     <>
       <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ duration: 0.2 }} className="group">
         <Card
-          className={`overflow-hidden bg-[#1a1a1a] border ${statusConfig.cardClass} transition-all duration-300 hover:shadow-xl`}
+          className={`overflow-hidden bg-gradient-to-br ${statusConfig.gradient} border ${statusConfig.cardClass} transition-all duration-300 hover:shadow-xl rounded-lg`}
         >
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
@@ -249,12 +254,12 @@ export function BookingRequestCard({
             </div>
           </CardContent>
 
-          <CardFooter className="pt-0 flex flex-col sm:flex-row gap-2">
+          <CardFooter className="pt-0 flex flex-col sm:flex-row gap-2 border-t border-[#2a2a2a] bg-[#1a1a1a]/50">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowDetails(true)}
-              className="w-full sm:w-auto border-[#3a3a3a] hover:bg-[#2a2a2a] hover:text-[#ff7145]"
+              className="w-full sm:w-auto border-[#3a3a3a] bg-[#2a2a2a] text-white hover:bg-[#3a3a3a] hover:text-[#ff7145]"
             >
               <MessageSquare className="h-4 w-4 mr-2" />
               Détails
@@ -270,7 +275,7 @@ export function BookingRequestCard({
                         size="sm"
                         onClick={handleReject}
                         disabled={isProcessing}
-                        className="flex-1 sm:flex-none bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600"
+                        className="flex-1 sm:flex-none bg-[#2a2a2a] border border-red-500/30 text-red-500 hover:bg-red-500/20"
                       >
                         <X className="h-4 w-4 sm:mr-2" />
                         <span className="hidden sm:inline">Rejeter</span>
@@ -288,7 +293,7 @@ export function BookingRequestCard({
                       <Button
                         variant="default"
                         size="sm"
-                        className="flex-1 sm:flex-none bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                        className="flex-1 sm:flex-none bg-[#ff7145] hover:bg-[#ff8d69]"
                         onClick={handleAccept}
                         disabled={isProcessing}
                       >
@@ -310,7 +315,9 @@ export function BookingRequestCard({
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="sm:max-w-[500px] bg-[#1a1a1a] border border-[#2a2a2a] shadow-xl">
           <DialogHeader className="space-y-3">
-            <div className={`w-12 h-12 rounded-full ${statusConfig.bgColor} flex items-center justify-center mx-auto`}>
+            <div
+              className={`w-12 h-12 rounded-full ${statusConfig.iconBgColor} flex items-center justify-center mx-auto`}
+            >
               {statusConfig.icon}
             </div>
             <DialogTitle className="text-center text-xl">Détails du shoot</DialogTitle>
@@ -401,7 +408,7 @@ export function BookingRequestCard({
               <div className="flex gap-2 mt-4">
                 <Button
                   variant="destructive"
-                  className="flex-1 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600"
+                  className="flex-1 bg-[#2a2a2a] border border-red-500/30 text-red-500 hover:bg-red-500/20"
                   onClick={handleReject}
                   disabled={isProcessing}
                 >
@@ -410,7 +417,7 @@ export function BookingRequestCard({
                 </Button>
                 <Button
                   variant="default"
-                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                  className="flex-1 bg-[#ff7145] hover:bg-[#ff8d69]"
                   onClick={handleAccept}
                   disabled={isProcessing}
                 >
