@@ -397,7 +397,7 @@ export default function Home() {
           {/* Photographer List and Filter Section */}
           <div className="mb-12" id="browse-section">
             <AnimatedSection>
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-6 flex-col sm:flex-row gap-4">
                 <h2 className="text-2xl font-bold flex items-center">
                   <span className="text-[#ff7145] mr-2">{t("section.browse")}</span>
                   {showRole === "photographer" ? t("section.photographers") : "Cosplayers"}
@@ -414,27 +414,29 @@ export default function Home() {
                   </span>
                 </h2>
 
-                <div className="flex items-center bg-[#2a2a2a] rounded-full p-1">
-                  <button
-                    onClick={() => setShowRole("photographer")}
-                    className={`px-4 py-2 rounded-full text-sm transition-all ${
-                      showRole === "photographer" ? "bg-[#ff7145] text-white" : "text-gray-300 hover:text-white"
-                    }`}
-                    aria-pressed={showRole === "photographer"}
-                  >
-                    <Camera size={16} className="inline mr-2" aria-hidden="true" />
-                    Photographes
-                  </button>
-                  <button
-                    onClick={() => setShowRole("cosplayer")}
-                    className={`px-4 py-2 rounded-full text-sm transition-all ${
-                      showRole === "cosplayer" ? "bg-[#ff7145] text-white" : "text-gray-300 hover:text-white"
-                    }`}
-                    aria-pressed={showRole === "cosplayer"}
-                  >
-                    <User size={16} className="inline mr-2" aria-hidden="true" />
-                    Cosplayers
-                  </button>
+                <div className="bg-[#2a2a2a] rounded-full p-1 w-full sm:w-auto flex justify-center">
+                  <div className="flex w-full max-w-[280px]">
+                    <button
+                      onClick={() => setShowRole("photographer")}
+                      className={`flex-1 flex items-center justify-center py-3 px-4 rounded-full text-sm font-medium transition-all ${
+                        showRole === "photographer" ? "bg-[#ff7145] text-white" : "text-gray-300 hover:text-white"
+                      }`}
+                      aria-pressed={showRole === "photographer"}
+                    >
+                      <Camera size={16} className="mr-2" aria-hidden="true" />
+                      Photographes
+                    </button>
+                    <button
+                      onClick={() => setShowRole("cosplayer")}
+                      className={`flex-1 flex items-center justify-center py-3 px-4 rounded-full text-sm font-medium transition-all ${
+                        showRole === "cosplayer" ? "bg-[#ff7145] text-white" : "text-gray-300 hover:text-white"
+                      }`}
+                      aria-pressed={showRole === "cosplayer"}
+                    >
+                      <User size={16} className="mr-2" aria-hidden="true" />
+                      Cosplayers
+                    </button>
+                  </div>
                 </div>
               </div>
             </AnimatedSection>
