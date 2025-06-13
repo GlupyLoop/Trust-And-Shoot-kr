@@ -67,8 +67,14 @@ export default function CosplayerDashboard() {
   const stats = {
     portfolioImages: portfolioItems.length,
     favoritePhotographers: favoritePhotographers.length,
-    upcomingShots: 3, // Mock data
-    completedShots: 12, // Mock data
+    upcomingShots: bookings.filter(
+      (booking) =>
+        booking.status === "accepted" && timeSlots.find((slot) => slot.id === booking.timeSlotId)?.date > new Date(),
+    ).length,
+    completedShots: bookings.filter(
+      (booking) =>
+        booking.status === "accepted" && timeSlots.find((slot) => slot.id === booking.timeSlotId)?.date <= new Date(),
+    ).length,
   }
 
   useEffect(() => {
@@ -254,7 +260,9 @@ export default function CosplayerDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Note générale</p>
-              <p className="text-2xl font-bold text-white">4.8/5</p>
+              <p className="text-2xl font-bold text-white">
+                {userData?.averageRating ? `${userData.averageRating.toFixed(1)}/5` : "N/A"}
+              </p>
             </div>
             <div className="bg-[#ff7145]/20 p-3 rounded-lg">
               <Star className="w-6 h-6 text-[#ff7145]" />
@@ -268,7 +276,7 @@ export default function CosplayerDashboard() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Upcoming Shoots</p>
+              <p className="text-sm text-gray-400">Séances à venir</p>
               <p className="text-2xl font-bold text-white">{stats.upcomingShots}</p>
             </div>
             <div className="bg-[#ff7145]/20 p-3 rounded-lg">
@@ -283,7 +291,7 @@ export default function CosplayerDashboard() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Completed Shoots</p>
+              <p className="text-sm text-gray-400">Séances terminées</p>
               <p className="text-2xl font-bold text-white">{stats.completedShots}</p>
             </div>
             <div className="bg-[#ff7145]/20 p-3 rounded-lg">
